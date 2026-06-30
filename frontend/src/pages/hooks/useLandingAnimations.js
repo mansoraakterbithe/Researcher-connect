@@ -17,7 +17,7 @@
 // memorises trigonometry for floating dots — copy it)
 // ============================================================
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 // 🍰 EXAMPLE: useEffect is like a reminder note that says
 // "after everything is ready, run this list of tasks"
 // 📚 LEARN: this comes from the 'react' library itself
@@ -36,13 +36,13 @@ export function useLandingAnimations() {
     // ── 1. PARTICLE BACKGROUND ────────────────────────────
     // 🍰 EXAMPLE: imagine fireflies floating up from the
     // bottom of the screen forever. That's what this does.
-    const canvas = document.getElementById('pc');
+    const canvas = document.getElementById("pc");
     if (!canvas) return;
     // 📚 LEARN: "if (!canvas) return" means "if this element
     // doesn't exist, stop here — don't crash the whole app"
     // This is called a SAFETY CHECK — very important habit.
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     // 🍰 EXAMPLE: ctx is like picking up a paintbrush.
     // canvas is the blank paper, ctx is what lets you draw on it.
 
@@ -51,17 +51,17 @@ export function useLandingAnimations() {
       canvas.height = window.innerHeight;
     }
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener("resize", resizeCanvas);
     // 🍰 EXAMPLE: if you resize your browser window, the canvas
     // (paper) resizes too, so the drawing doesn't look broken.
     // 📚 LEARN: addEventListener = "listen for this event and
     // run this function whenever it happens"
 
     const colors = [
-      'rgba(255,210,0,0.25)',
-      'rgba(255,180,0,0.2)',
-      'rgba(91,164,230,0.2)',
-      'rgba(255,230,100,0.15)',
+      "rgba(255,210,0,0.25)",
+      "rgba(255,180,0,0.2)",
+      "rgba(91,164,230,0.2)",
+      "rgba(255,230,100,0.15)",
     ];
     // 🍰 EXAMPLE: a box of 4 different coloured paint tubes
     // the fireflies will randomly pick from
@@ -146,51 +146,52 @@ export function useLandingAnimations() {
     // ── 2. CURSOR GLOW ─────────────────────────────────────
     // 🍰 EXAMPLE: a soft glowing circle that follows your mouse
     // like a torch beam following where you point it
-    const cursorGlow = document.getElementById('cg');
+    const cursorGlow = document.getElementById("cg");
     function handleMouseMove(e) {
       if (cursorGlow) {
-        cursorGlow.style.left = e.clientX + 'px';
-        cursorGlow.style.top = e.clientY + 'px';
+        cursorGlow.style.left = e.clientX + "px";
+        cursorGlow.style.top = e.clientY + "px";
       }
     }
-    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener("mousemove", handleMouseMove);
     // 🍰 EXAMPLE: e.clientX and e.clientY are the mouse's exact
     // pixel position on screen. We constantly update the glow's
     // position to match — so it "follows" the mouse in real time.
 
     // ── 3. LETTER BY LETTER TITLE TYPING ───────────────────
-    const titleEl = document.getElementById('htitle');
+    const titleEl = document.getElementById("htitle");
     if (titleEl) {
+      titleEl.innerHTML = "";
       const words = [
-        { text: 'Welcome to ', cls: '' },
-        { text: 'Researcher', cls: 'yc' },
-        { text: '\n', cls: '' },
-        { text: 'Connect', cls: 'bc' },
+        { text: "Welcome to ", cls: "" },
+        { text: "Researcher", cls: "yc" },
+        { text: "\n", cls: "" },
+        { text: "Connect", cls: "bc" },
       ];
       // 🍰 EXAMPLE: this is the script for our typewriter.
       // It says "type these words, in this order, in these colours"
 
       let delay = 1200;
       words.forEach((w) => {
-        if (w.text === '\n') {
-          titleEl.appendChild(document.createElement('br'));
+        if (w.text === "\n") {
+          titleEl.appendChild(document.createElement("br"));
           return;
         }
         // 🍰 EXAMPLE: \n means "new line" — we insert a real
         // line break element so "Connect" appears on its own row
 
-        w.text.split('').forEach((ch) => {
+        w.text.split("").forEach((ch) => {
           // 🍰 EXAMPLE: .split('') breaks a word into single
           // letters, like cutting "CAT" into "C", "A", "T"
-          const span = document.createElement('span');
-          span.className = 'char' + (w.cls ? ' ' + w.cls : '');
-          span.textContent = ch === ' ' ? '\u00A0' : ch;
+          const span = document.createElement("span");
+          span.className = "char" + (w.cls ? " " + w.cls : "");
+          span.textContent = ch === " " ? "\u00A0" : ch;
           // 🍰 EXAMPLE: \u00A0 is a special "non-breaking space"
           // — normal spaces sometimes get squished by browsers,
           // this one always stays visible
-          span.style.animationDelay = delay + 'ms';
+          span.style.animationDelay = delay + "ms";
           titleEl.appendChild(span);
-          delay += ch === ' ' ? 60 : 55;
+          delay += ch === " " ? 60 : 55;
           // 🍰 EXAMPLE: each letter gets a slightly LATER delay
           // than the one before it — this creates the typewriter
           // "letters appearing one after another" effect
@@ -227,10 +228,10 @@ export function useLandingAnimations() {
       }, startDelay);
     }
 
-    countUp('s1', 12400, '+', 500);
-    countUp('s2', 3200, '+', 700);
-    countUp('s3', 180, '+', 900);
-    countUp('s4', 8900, '+', 1100);
+    countUp("s1", 12400, "+", 500);
+    countUp("s2", 3200, "+", 700);
+    countUp("s3", 180, "+", 900);
+    countUp("s4", 8900, "+", 1100);
 
     // ── 5. SCROLL REVEAL + REVERSE ANIMATION ───────────────
     // 🍰 EXAMPLE: imagine curtains on a window. As you scroll
@@ -238,13 +239,13 @@ export function useLandingAnimations() {
     // (element appears). As you scroll back UP and it leaves
     // the screen, the curtain CLOSES again (element disappears).
     // This is exactly the "jump and reverse" effect you asked for.
-    const revealElements = document.querySelectorAll('.reveal');
+    const revealElements = document.querySelectorAll(".reveal");
 
     revealElements.forEach((el, i) => {
-      if (el.classList.contains('cat-card')) {
-        const allCards = document.querySelectorAll('.cat-card');
+      if (el.classList.contains("cat-card")) {
+        const allCards = document.querySelectorAll(".cat-card");
         const idx = Array.from(allCards).indexOf(el);
-        el.style.transitionDelay = (idx % 6) * 0.07 + 's';
+        el.style.transitionDelay = (idx % 6) * 0.07 + "s";
         // 🍰 EXAMPLE: each category card waits a tiny bit longer
         // than the one before it, so they appear in a STAGGERED
         // wave instead of all popping in at the exact same time
@@ -264,8 +265,8 @@ export function useLandingAnimations() {
           if (entry.isIntersecting) {
             // 🍰 EXAMPLE: isIntersecting = true means "this
             // element is currently visible on screen right now"
-            el.classList.remove('exit');
-            el.classList.add('active');
+            el.classList.remove("exit");
+            el.classList.add("active");
             // adding "active" class triggers the CSS animation
             // that makes it fade/slide INTO view
           } else {
@@ -274,19 +275,19 @@ export function useLandingAnimations() {
               // 🍰 EXAMPLE: rect.top > 0 means the element is
               // BELOW the visible screen (hasn't been reached yet)
               // — so we reset it to "not yet shown" state
-              el.classList.remove('active');
-              el.classList.remove('exit');
+              el.classList.remove("active");
+              el.classList.remove("exit");
             } else {
               // 🍰 EXAMPLE: rect.top <= 0 means the element has
               // scrolled UP and OFF the top of the screen
               // — this triggers the REVERSE exit animation
-              el.classList.remove('active');
-              el.classList.add('exit');
+              el.classList.remove("active");
+              el.classList.add("exit");
             }
           }
         });
       },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
       // 🍰 EXAMPLE: threshold 0.12 means "trigger when 12% of
       // the element is visible" — doesn't wait for the WHOLE
       // thing to show before starting the animation
@@ -297,7 +298,7 @@ export function useLandingAnimations() {
     // every single element with the "reveal" class
 
     // ── 6. 3D PARALLAX TILT on hero card ───────────────────
-    const heroCard = document.getElementById('heroCard');
+    const heroCard = document.getElementById("heroCard");
     function handleParallax(e) {
       if (!heroCard) return;
       const x = (e.clientX / window.innerWidth - 0.5) * 6;
@@ -315,21 +316,21 @@ export function useLandingAnimations() {
       // rotateX tilts up-down — together they create a "card
       // following your mouse like it's a real 3D object" effect
     }
-    document.addEventListener('mousemove', handleParallax);
+    document.addEventListener("mousemove", handleParallax);
 
     // ── 7. CATEGORY SEARCH ──────────────────────────────────
-    const searchInput = document.getElementById('catSearch');
+    const searchInput = document.getElementById("catSearch");
     function doSearch() {
       const term = searchInput.value.toLowerCase().trim();
       // 🍰 EXAMPLE: toLowerCase() turns "Physics" into "physics"
       // so searching works no matter how the user types it.
       // trim() removes accidental spaces at the start/end.
 
-      const cards = document.querySelectorAll('.cat-card');
+      const cards = document.querySelectorAll(".cat-card");
       let foundCount = 0;
 
       cards.forEach((card) => {
-        const name = card.dataset.name || '';
+        const name = card.dataset.name || "";
         // 🍰 EXAMPLE: dataset.name reads the data-name="..."
         // attribute we wrote in the JSX earlier
 
@@ -338,7 +339,7 @@ export function useLandingAnimations() {
         // show everything". Otherwise, check if the card's name
         // CONTAINS the search word anywhere inside it.
 
-        card.classList.toggle('hidden', !matches);
+        card.classList.toggle("hidden", !matches);
         // 🍰 EXAMPLE: toggle(class, condition) — if condition is
         // true, ADD the class. If false, REMOVE it. Here: if it
         // does NOT match, hide the card.
@@ -346,75 +347,75 @@ export function useLandingAnimations() {
         if (matches) foundCount++;
       });
 
-      const noResults = document.getElementById('noResults');
-      const searchTermEl = document.getElementById('searchTerm');
+      const noResults = document.getElementById("noResults");
+      const searchTermEl = document.getElementById("searchTerm");
       if (searchTermEl) searchTermEl.textContent = term;
       if (noResults) {
-        noResults.classList.toggle('show', foundCount === 0 && term !== '');
+        noResults.classList.toggle("show", foundCount === 0 && term !== "");
       }
     }
 
     if (searchInput) {
-      searchInput.addEventListener('input', doSearch);
+      searchInput.addEventListener("input", doSearch);
       // 🍰 EXAMPLE: 'input' event fires EVERY time you type a
       // single character — this is what makes search feel instant
     }
 
     // ── 8. FILTER CHIPS ──────────────────────────────────────
-    const chips = document.querySelectorAll('.chip');
+    const chips = document.querySelectorAll(".chip");
     chips.forEach((chip) => {
-      chip.addEventListener('click', () => {
-        chips.forEach((c) => c.classList.remove('active'));
-        chip.classList.add('active');
+      chip.addEventListener("click", () => {
+        chips.forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
         // 🍰 EXAMPLE: remove "active" highlight from ALL chips
         // first, then add it ONLY to the one just clicked —
         // this ensures only one chip looks "selected" at a time
 
-        if (searchInput) searchInput.value = '';
+        if (searchInput) searchInput.value = "";
 
         const group = chip.dataset.group;
-        const cards = document.querySelectorAll('.cat-card');
+        const cards = document.querySelectorAll(".cat-card");
         cards.forEach((card) => {
-          const show = group === 'all' || card.dataset.cat === group;
-          card.classList.toggle('hidden', !show);
+          const show = group === "all" || card.dataset.cat === group;
+          card.classList.toggle("hidden", !show);
           if (show) {
-            card.classList.remove('active');
-            setTimeout(() => card.classList.add('active'), 10);
+            card.classList.remove("active");
+            setTimeout(() => card.classList.add("active"), 10);
             // 🍰 EXAMPLE: briefly removing then re-adding "active"
             // forces the entrance animation to PLAY AGAIN, even
             // though the card was already visible before
           }
         });
 
-        const noResults = document.getElementById('noResults');
-        if (noResults) noResults.classList.remove('show');
+        const noResults = document.getElementById("noResults");
+        if (noResults) noResults.classList.remove("show");
       });
     });
 
     // ── 9. SHOW ALL / SHOW LESS TOGGLE ──────────────────────
     let showingOnlySix = true;
-    const allCards = document.querySelectorAll('.cat-card');
-    const viewAllBtn = document.getElementById('viewAllBtn');
+    const allCards = document.querySelectorAll(".cat-card");
+    const viewAllBtn = document.getElementById("viewAllBtn");
 
     if (viewAllBtn) {
-      viewAllBtn.addEventListener('click', () => {
+      viewAllBtn.addEventListener("click", () => {
         showingOnlySix = !showingOnlySix;
         // 🍰 EXAMPLE: ! flips true to false and false to true
         // — like flicking a light switch to the opposite position
 
         allCards.forEach((card, i) => {
           if (i >= 6) {
-            card.style.display = showingOnlySix ? 'none' : 'flex';
+            card.style.display = showingOnlySix ? "none" : "flex";
             if (!showingOnlySix) {
-              card.classList.remove('active');
-              setTimeout(() => card.classList.add('active'), (i - 6) * 80);
+              card.classList.remove("active");
+              setTimeout(() => card.classList.add("active"), (i - 6) * 80);
             }
           }
         });
 
         viewAllBtn.textContent = showingOnlySix
-          ? 'Show All Fields ↓'
-          : 'Show Less ↑';
+          ? "Show All Fields ↓"
+          : "Show Less ↑";
       });
     }
 
@@ -427,16 +428,15 @@ export function useLandingAnimations() {
     // a different page, wasting battery and memory, and can
     // cause bugs.
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mousemove', handleParallax);
+      window.removeEventListener("resize", resizeCanvas);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mousemove", handleParallax);
       cancelAnimationFrame(animationFrameId);
       revealObserver.disconnect();
     };
     // 📚 LEARN: this returned function is called a "cleanup
     // function" — one of the most important React concepts.
     // Anything you turn ON in useEffect, you must turn OFF here.
-
   }, []);
   // 🍰 EXAMPLE: that empty [] at the end means "only run this
   // ONE TIME when the page first loads, never again after that"

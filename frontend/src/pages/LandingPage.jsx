@@ -1,7 +1,7 @@
 // ============================================================
 // FILE: src/pages/LandingPage.jsx
 // ============================================================
-
+import { useNavigate } from 'react-router-dom';
 import { useLandingAnimations } from './hooks/useLandingAnimations';
 import './styles/LandingPage.css';
 
@@ -168,6 +168,7 @@ function Logo() {
 // ── MAIN COMPONENT ───────────────────────────────────────────
 function LandingPage() {
   useLandingAnimations();
+const navigate = useNavigate();
 
   return (
     <div className="lp">
@@ -203,8 +204,8 @@ function LandingPage() {
               the right opportunities — powered by intelligent AI matching.
             </p>
             <div className="hero-btns">
-              <button className="btn-p">Get Started →</button>
-              <button className="btn-s">Explore Projects</button>
+              <button className="btn-p" onClick={() => navigate('/auth')}>Get Started →</button>
+              <button className="btn-s" onClick={() => navigate('/home')}>Explore Projects</button>
             </div>
           </div>
           <div className="hero-right">
