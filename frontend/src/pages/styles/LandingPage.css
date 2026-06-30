@@ -1153,7 +1153,14 @@ canvas {
   font-size: 13px;
   font-weight: 700;
 }
+.soc-btn svg {
+  fill: rgba(255, 255, 255, 0.6);
+  transition: fill 0.3s;
+}
 
+.soc-btn:hover svg {
+  fill: #FFD700;
+}
 .soc-btn:hover {
   background: rgba(255, 210, 0, 0.15);
   border-color: rgba(255, 210, 0, 0.5);
@@ -1161,6 +1168,8 @@ canvas {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 210, 0, 0.2);
   color: #FFD700;
 }
+
+
 /* 🍰 EXAMPLE: combining translateY (lift up) + scale (grow
    bigger) + rotate (tilt slightly) in ONE transform property
    creates a playful "pop and spin" effect on hover — like a

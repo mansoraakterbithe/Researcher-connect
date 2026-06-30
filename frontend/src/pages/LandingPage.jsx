@@ -324,10 +324,30 @@ function LandingPage() {
         <div className="reveal from-bottom">
           <h3>Follow Us For Latest Updates</h3>
           <div className="soc-row">
-            <div className="soc-btn">f</div>
-            <div className="soc-btn">ig</div>
-            <div className="soc-btn">in</div>
-            <div className="soc-btn">tw</div>
+            <div className="soc-btn">
+              <svg viewBox="0 0 24 24" width="18" height="18">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </div>
+            <div className="soc-btn">
+              <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" width="18" height="18">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+              </svg>
+            </div>
+            <div className="soc-btn">
+              <svg viewBox="0 0 24 24" width="18" height="18">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/>
+                <rect x="2" y="9" width="4" height="12"/>
+                <circle cx="4" cy="4" r="2"/>
+              </svg>
+            </div>
+            <div className="soc-btn">
+              <svg viewBox="0 0 24 24" width="18" height="18">
+                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+              </svg>
+            </div>
           </div>
           <div className="ft-links">
             <a href="#">About</a><a href="#">Docs</a><a href="#">Blog</a>
