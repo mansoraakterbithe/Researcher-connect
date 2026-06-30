@@ -204,8 +204,8 @@ const navigate = useNavigate();
               the right opportunities — powered by intelligent AI matching.
             </p>
             <div className="hero-btns">
-              <button className="btn-p" onClick={() => navigate('/auth')}>Get Started →</button>
-              <button className="btn-s" onClick={() => navigate('/home')}>Explore Projects</button>
+              <button className="btn-p" onClick={() => window.open('/auth', '_blank')}>Get Started →</button>
+              <button className="btn-s" onClick={() => window.open('/home')}>Explore Projects</button>
             </div>
           </div>
           <div className="hero-right">
