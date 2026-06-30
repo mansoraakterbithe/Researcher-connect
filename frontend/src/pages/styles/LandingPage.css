@@ -1,0 +1,1279 @@
+/* ============================================================
+   📄 WHAT IS THIS FILE?
+   This is the paint and decoration for your whole page.
+   The JSX file builds the skeleton (the bones, the structure).
+   This CSS file dresses that skeleton — colours, sizes, glow,
+   spacing, fonts — everything that makes it look like an
+   actual designed website instead of plain stacked text.
+
+   🍰 REAL LIFE EXAMPLE:
+   JSX is like building a house frame out of wood — walls,
+   doors, windows in the right places, but bare wood everywhere.
+   CSS is the paint, wallpaper, lighting, and furniture that
+   makes it feel like a real home.
+
+   📚 WHAT TO LEARN: flexbox, grid, animations, transitions
+   📋 WHAT TO COPY: exact colour codes, shadow values, blur amounts
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800;900&display=swap');
+/* 🍰 EXAMPLE: this downloads two custom fonts from Google's
+   free font library — Inter (clean body text) and Poppins
+   (bold headings). Without this, your text uses the browser's
+   boring default font. */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* 🍰 EXAMPLE: the * means "apply this to EVERY element on the
+   page". Browsers add random spacing around things by default
+   (like a messy room) — this line cleans that up first, so
+   everyone starts from the same blank slate. */
+
+body {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+/* 🍰 EXAMPLE: overflow-x:hidden stops an annoying sideways
+   scrollbar from appearing if anything is slightly too wide.
+   scroll-behavior:smooth makes clicking a link scroll the
+   page gently instead of jumping instantly — like gliding
+   instead of teleporting. */
+
+/* ════════════════════════════════════════════════════════
+   PAGE WRAPPER + BACKGROUND
+   ════════════════════════════════════════════════════════ */
+
+.lp {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  position: relative;
+  background: #0a0800;
+}
+/* 🍰 EXAMPLE: .lp is the big container that holds your ENTIRE
+   page. min-height:100vh means "be at least as tall as the
+   browser window" — like a carpet that always covers the
+   whole floor, even in an empty room.
+   position:relative is important — it lets the floating
+   background layers inside know where to anchor themselves. */
+
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  animation: bgMorph 12s ease-in-out infinite alternate;
+}
+/* 🍰 EXAMPLE: position:fixed means this background STAYS in
+   place even when you scroll — like a wallpaper glued to your
+   monitor, not glued to the page content.
+   inset:0 is shorthand for "top:0; right:0; bottom:0; left:0"
+   — stretches it to fill the entire screen.
+   z-index:0 means "put this at the very BACK, behind everything" */
+
+@keyframes bgMorph {
+  0% {
+    background: radial-gradient(ellipse at 20% 50%, rgba(255,200,0,0.18) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(27,58,107,0.35) 0%, transparent 50%),
+                linear-gradient(135deg, #0f0c00 0%, #1a1400 40%, #0d1b2e 100%);
+  }
+  50% {
+    background: radial-gradient(ellipse at 70% 30%, rgba(255,180,0,0.2) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 80%, rgba(27,58,107,0.3) 0%, transparent 55%),
+                linear-gradient(135deg, #0d1b2e 0%, #0f0c00 40%, #1a1400 100%);
+  }
+  100% {
+    background: radial-gradient(ellipse at 50% 70%, rgba(255,220,0,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 10%, rgba(27,58,107,0.4) 0%, transparent 50%),
+                linear-gradient(135deg, #1a1400 0%, #0d1b2e 40%, #0f0c00 100%);
+  }
+}
+/* 🍰 EXAMPLE: @keyframes is a script for an animation — like
+   a flip book. At 0% (the start), the background looks one
+   way. At 50% (halfway through), it slowly morphs to look
+   different. At 100% (the end), it changes again, then loops
+   back to the start forever (because of "infinite" above).
+   This creates a slow, breathing colour shift in the
+   background — never harsh, always gentle.
+   📚 LEARN: radial-gradient = colour fading outward from a
+   point, like a spotlight. linear-gradient = colour fading
+   in a straight line, like a sunset sky. */
+
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+/* 🍰 EXAMPLE: the <canvas id="pc"> element is where our
+   JavaScript draws the floating particles (fireflies).
+   pointer-events:none means "let clicks pass THROUGH this
+   layer" — so you can still click buttons underneath the
+   particles, like clicking through a sheet of glass. */
+
+.cg {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,210,0,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+  transition: left 0.06s, top 0.06s;
+}
+/* 🍰 EXAMPLE: .cg is the soft yellow glow that follows your
+   mouse cursor. border-radius:50% turns the square box into
+   a perfect circle. transform:translate(-50%,-50%) centres
+   the glow exactly ON your cursor position instead of having
+   the cursor at its top-left corner. */
+
+/* ════════════════════════════════════════════════════════
+   NAVBAR
+   ════════════════════════════════════════════════════════ */
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 48px;
+  background: rgba(10, 8, 0, 0.7);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 210, 0, 0.1);
+  animation: navDrop 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* 🍰 EXAMPLE: position:fixed + top:0 means the navbar STICKS
+   to the very top of the screen always, even while scrolling
+   — like a header that never moves.
+   display:flex turns this into a row container — its children
+   (logo, links, language) line up side by side automatically,
+   instead of stacking vertically like normal HTML does.
+   justify-content:space-between pushes the FIRST child to the
+   left edge, the LAST child to the right edge, and spreads
+   anything in between evenly — like 3 people sitting at the
+   far left, far right, and middle of a long bench.
+   backdrop-filter:blur(24px) blurs whatever scrolls UNDER the
+   navbar — this creates the "frosted glass" look. z-index:1000
+   is a very high number to guarantee the navbar stays on TOP
+   of literally everything else, including the particles. */
+
+@keyframes navDrop {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+/* 🍰 EXAMPLE: "from" is the starting point, "to" is the ending
+   point. translateY(-100%) means "100% of its own height,
+   moved UPWARD" — basically completely off-screen above the
+   browser. Then it slides down into its normal position. This
+   plays ONCE when the page loads — like a blind being pulled
+   down to reveal a window. */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* 🍰 EXAMPLE: align-items:center vertically centres the logo
+   icon and text next to each other. gap:10px adds a 10 pixel
+   space between them — like leaving a finger-width gap between
+   two LEGO pieces instead of jamming them together. */
+
+.logo-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.logo-text span {
+  color: #FFD700;
+  text-shadow: 0 0 20px rgba(255, 210, 0, 0.5);
+}
+/* 🍰 EXAMPLE: text-shadow adds a soft glow behind the "Rc"
+   text — the numbers (0 0 20px) mean: no horizontal shift, no
+   vertical shift, 20px of blur spread. This is what makes
+   yellow text look like it's gently glowing, like a neon sign. */
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+}
+/* 🍰 EXAMPLE: list-style:none removes the default bullet
+   points that browsers automatically add to <ul> lists —
+   like erasing the dots before "Home, Explore, About us" */
+
+.nav-links li {
+  opacity: 0;
+  animation: fadeSlideDown 0.5s ease forwards;
+}
+.nav-links li:nth-child(1) { animation-delay: 0.5s; }
+.nav-links li:nth-child(2) { animation-delay: 0.65s; }
+.nav-links li:nth-child(3) { animation-delay: 0.8s; }
+/* 🍰 EXAMPLE: nth-child(1) means "the FIRST item in this list",
+   nth-child(2) means "the SECOND item", and so on. By giving
+   each one a slightly LATER animation-delay, they appear one
+   after another instead of all at once — like dominoes falling
+   in sequence rather than all tipping over simultaneously. */
+
+@keyframes fadeSlideDown {
+  from { transform: translateY(-16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.nav-links a {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.25s;
+  display: block;
+  position: relative;
+}
+/* 🍰 EXAMPLE: text-decoration:none removes the default blue
+   underline that browsers put on links automatically.
+   transition:all 0.25s means "whenever ANY property of this
+   element changes (like colour on hover), animate that change
+   smoothly over a quarter of a second" instead of snapping
+   instantly. */
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 0;
+  height: 1.5px;
+  background: #FFD700;
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover::after {
+  width: 60%;
+}
+/* 🍰 EXAMPLE: ::after creates an invisible extra mini-element
+   AFTER the link text, using pure CSS, no extra HTML needed.
+   We use it here as a small yellow underline that starts at
+   width:0 (invisible) and grows to width:60% only when you
+   HOVER your mouse over the link — like a line drawing itself
+   underneath the word as you point at it. */
+
+.nav-links a:hover {
+  color: #FFD700;
+}
+
+.lang {
+  font-size: 13px;
+  font-weight: 600;
+  color: #FFD700;
+  background: rgba(255, 210, 0, 0.1);
+  padding: 7px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 210, 0, 0.3);
+  cursor: pointer;
+  opacity: 0;
+  animation: fadeIn 0.6s ease 1s forwards;
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+/* 🍰 EXAMPLE: border-radius:20px on a small element with not
+   much height creates a fully rounded "pill" shape — like a
+   vitamin capsule, instead of a sharp rectangle. cursor:pointer
+   changes your mouse icon to a little hand when hovering,
+   signalling "you can click this". */
+
+/* ════════════════════════════════════════════════════════
+   SECTIONS (general layout containers)
+   ════════════════════════════════════════════════════════ */
+
+.section {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  padding: 90px 48px 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+/* 🍰 EXAMPLE: flex-direction:column makes children stack
+   vertically (top to bottom) instead of the default flex
+   behaviour of side-by-side. justify-content:center vertically
+   centres everything inside this section — like centring a
+   painting on a tall wall instead of pinning it to the top. */
+
+/* ════════════════════════════════════════════════════════
+   SCROLL REVEAL SYSTEM
+   These classes are added/removed by our JavaScript hook —
+   this is the CSS half of that "curtain opening/closing" effect
+   ════════════════════════════════════════════════════════ */
+
+.reveal {
+  opacity: 0;
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.from-bottom { transform: translateY(60px); }
+.reveal.from-left { transform: translateX(-60px); }
+.reveal.from-right { transform: translateX(60px); }
+.reveal.scale-in { transform: scale(0.85); }
+.reveal.active { opacity: 1; transform: none; }
+
+.reveal.exit { opacity: 0; }
+.reveal.from-bottom.exit { transform: translateY(-60px); }
+.reveal.from-left.exit { transform: translateX(-60px); }
+.reveal.from-right.exit { transform: translateX(60px); }
+.reveal.scale-in.exit { transform: scale(0.85); }
+/* 🍰 EXAMPLE: by DEFAULT, every .reveal element is invisible
+   (opacity:0) and shifted away from its normal position
+   (translateY(60px) means "60 pixels lower than normal").
+   When JavaScript adds the "active" class, opacity becomes 1
+   (fully visible) and transform:none snaps it back to its
+   normal spot — but because of the "transition" line above,
+   this change happens SMOOTHLY over 0.7 seconds instead of
+   instantly, creating the slide-and-fade-in effect.
+   When JavaScript adds "exit" instead, it reverses — fading
+   back out and shifting away again, which is your "go reverse
+   when scrolling back up" feature. */
+
+/* ════════════════════════════════════════════════════════
+   HERO CARD
+   ════════════════════════════════════════════════════════ */
+
+.hero-sec {
+  background: transparent;
+}
+
+.hero-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 210, 0, 0.15);
+  border-radius: 32px;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: stretch;
+  max-width: 940px;
+  width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow 0.4s, transform 0.4s;
+}
+/* 🍰 EXAMPLE: margin:0 auto is a classic CSS trick to CENTRE
+   a block horizontally on the page — "auto" tells the browser
+   "split the leftover space equally on both sides of this box".
+   box-shadow with TWO values separated by a comma layers two
+   shadows: one big outer glow (the card floating above the
+   page) and one tiny inset highlight (a subtle shine at the
+   very top edge, like light catching the rim of a glass). */
+
+.hero-card:hover {
+  box-shadow: 0 48px 100px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 210, 0, 0.06);
+}
+
+.hero-left {
+  padding: 52px 48px;
+  flex: 1;
+}
+/* 🍰 EXAMPLE: flex:1 tells this element "grow and take up ALL
+   the leftover space in your flex container". Since hero-right
+   has a fixed width (320px), hero-left automatically expands
+   to fill everything else — like one person stretching out on
+   a sofa after the other person has taken a fixed-size seat. */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 210, 0, 0.1);
+  border: 1px solid rgba(255, 210, 0, 0.25);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #FFD700;
+  margin-bottom: 24px;
+  box-shadow: 0 0 20px rgba(255, 210, 0, 0.08);
+}
+/* 🍰 EXAMPLE: inline-flex is like flex, but the whole badge
+   only takes up as much width as its content needs — not the
+   full row width. This keeps the badge small and pill-shaped
+   instead of stretching across the entire hero section. */
+
+.badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #FFD700;
+  box-shadow: 0 0 8px rgba(255, 210, 0, 0.8);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.5); opacity: 0.5; }
+}
+/* 🍰 EXAMPLE: this tiny dot grows bigger and fades slightly
+   at the halfway point of each 1.5 second cycle, then shrinks
+   back — like a heartbeat or a "live" recording indicator on
+   a camera, signalling "this is active right now". */
+
+.hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 18px;
+  color: white;
+}
+/* 🍰 EXAMPLE: line-height:1.1 controls the vertical spacing
+   BETWEEN lines of text when it wraps to multiple lines —
+   1.1 means "110% of the font size", which is fairly tight
+   spacing, good for big bold headlines. */
+
+.char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(40px) rotate(5deg);
+  animation: charIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.yc { color: #FFD700; text-shadow: 0 0 30px rgba(255, 210, 0, 0.4); }
+.bc { color: #5BA4E6; text-shadow: 0 0 20px rgba(91, 164, 230, 0.4); }
+@keyframes charIn {
+  to { opacity: 1; transform: none; }
+}
+/* 🍰 EXAMPLE: this is the CSS half of the typewriter effect.
+   Our JavaScript creates one <span class="char"> for every
+   single LETTER and gives each one a different animation-delay
+   (set inline via JavaScript, remember?). Each letter starts
+   slightly rotated and pushed down (invisible), then animates
+   up into its normal position — but because each letter has a
+   DIFFERENT delay, they appear to type themselves out one by
+   one, like a typewriter or someone hand-writing the title. */
+
+.hero-sub {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.75;
+  margin-bottom: 32px;
+  max-width: 380px;
+  opacity: 0;
+  animation: slideUp 0.8s ease 2s forwards;
+}
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+/* 🍰 EXAMPLE: max-width:380px stops this paragraph from
+   stretching too wide — readability research shows lines of
+   text that are TOO long are harder to read, like trying to
+   read a newspaper printed on one giant unbroken sheet instead
+   of narrow columns. */
+
+.hero-btns {
+  display: flex;
+  gap: 14px;
+  opacity: 0;
+  animation: slideUp 0.8s ease 2.2s forwards;
+}
+
+.btn-p {
+  padding: 14px 30px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0d1b2e;
+  background: linear-gradient(135deg, #FFE234, #FFB800);
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(255, 210, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+}
+/* 🍰 EXAMPLE: font-family:inherit tells the button "use
+   whatever font your PARENT element is using" — buttons don't
+   automatically inherit fonts in CSS by default (a quirky
+   browser rule), so we must say this explicitly or the button
+   text looks different from the rest of the page. */
+
+.btn-p::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transition: left 0.5s;
+}
+.btn-p:hover::before {
+  left: 100%;
+}
+/* 🍰 EXAMPLE: this invisible white streak starts hidden
+   completely to the LEFT of the button (left:-100%). On hover,
+   it slides all the way across to the RIGHT (left:100%) — this
+   creates that "shimmer sweep" light effect you see on premium
+   buttons, like sunlight glinting across a polished car. */
+
+.btn-p:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 14px 36px rgba(255, 210, 0, 0.55), 0 0 60px rgba(255, 210, 0, 0.2);
+}
+.btn-p:active {
+  transform: scale(0.98);
+}
+/* 🍰 EXAMPLE: :active triggers ONLY during the exact moment
+   you are physically pressing down the mouse button — it
+   briefly shrinks the button slightly, simulating the feeling
+   of pressing a real, physical button that springs back. */
+
+.btn-s {
+  padding: 14px 30px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+.btn-s:hover {
+  border-color: rgba(255, 210, 0, 0.35);
+  color: #FFD700;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ════════════════════════════════════════════════════════
+   HERO RIGHT — illustration panel
+   ════════════════════════════════════════════════════════ */
+
+.hero-right {
+  width: 320px;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #0d1b2e, #1B3A6B, #0f2040);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  position: relative;
+  overflow: hidden;
+}
+/* 🍰 EXAMPLE: flex-shrink:0 tells this panel "NEVER get
+   squeezed smaller than your set width (320px), no matter how
+   tight on space the row becomes" — without this, flexbox
+   might try to shrink it to make room for the text side. */
+
+.hero-right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 210, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 210, 0, 0.04) 1px, transparent 1px);
+  background-size: 30px 30px;
+  animation: gridMove 8s linear infinite;
+}
+@keyframes gridMove {
+  from { background-position: 0 0; }
+  to { background-position: 30px 30px; }
+}
+/* 🍰 EXAMPLE: this creates a subtle grid of horizontal and
+   vertical lines, like graph paper, by repeating a tiny 30x30
+   pixel tile across the whole panel. Slowly shifting the
+   background-position makes the grid appear to drift slowly
+   in one direction, like a sci-fi holographic display. */
+
+.orbit {
+  position: absolute;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.o1 { width: 260px; height: 260px; border: 1px solid rgba(255, 210, 0, 0.12); animation: spin 10s linear infinite; }
+.o2 { width: 200px; height: 200px; border: 1px solid rgba(91, 164, 230, 0.15); animation: spin 7s linear infinite reverse; }
+.o3 { width: 140px; height: 140px; border: 1px dashed rgba(255, 210, 0, 0.08); animation: spin 5s linear infinite; }
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotate(0); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+/* 🍰 EXAMPLE: top:50%; left:50%; transform:translate(-50%,-50%)
+   is the standard CSS recipe for "perfectly centre this element
+   inside its parent, regardless of size" — used constantly in
+   real projects. Three rings of different sizes spin at
+   different speeds (10s, 7s, 5s) and one spins in "reverse"
+   direction — together this looks like a tiny solar system
+   orbiting around the scientist illustration. */
+
+.od {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #FFD700;
+  box-shadow: 0 0 12px rgba(255, 210, 0, 0.9);
+  top: -4px;
+  left: 50%;
+  margin-left: -4px;
+}
+.od2 {
+  background: #5BA4E6;
+  box-shadow: 0 0 12px rgba(91, 164, 230, 0.9);
+}
+/* 🍰 EXAMPLE: these little glowing dots sit ON the orbit rings
+   and spin WITH them (because they're children of .o1/.o2,
+   they inherit the parent's rotation automatically) — like a
+   moon orbiting a planet, riding along the circular path. */
+
+.corner-glow {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 210, 0, 0.18), transparent 70%);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.3); opacity: 1; }
+}
+
+.sci-wrap {
+  position: relative;
+  z-index: 2;
+  animation: sciFloat 4s ease-in-out infinite;
+}
+@keyframes sciFloat {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-16px) rotate(1deg); }
+}
+/* 🍰 EXAMPLE: the scientist illustration gently floats up and
+   down (translateY) while also subtly tilting left-right
+   (rotate -1deg to 1deg) — this combination makes it feel
+   alive and weightless, like it's slowly bobbing in zero
+   gravity, rather than just moving in one boring straight line. */
+
+/* ════════════════════════════════════════════════════════
+   STATS BAR
+   ════════════════════════════════════════════════════════ */
+
+.stats-sec {
+  position: relative;
+  z-index: 10;
+  padding: 0 48px 60px;
+}
+
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  background: rgba(10, 8, 0, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 210, 0, 0.08);
+  border-radius: 20px;
+  padding: 24px 0;
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 0 40px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+.stat:last-child {
+  border-right: none;
+}
+/* 🍰 EXAMPLE: :last-child specifically targets ONLY the final
+   item in a group — here, we add thin divider lines between
+   every stat EXCEPT after the very last one, since there's
+   nothing to divide from after that point. Like fence posts
+   between yard sections, but no post needed after the last
+   section ends. */
+
+.stat-n {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: #FFD700;
+  text-shadow: 0 0 20px rgba(255, 210, 0, 0.3);
+  min-width: 80px;
+  text-align: center;
+}
+/* 🍰 EXAMPLE: min-width:80px reserves enough horizontal space
+   for the BIGGEST possible number ("12,400+") even before the
+   counting animation finishes — without this, the layout would
+   visibly "jump" and resize as the number counts up from 0,
+   which looks glitchy. */
+
+.stat-l {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* 🍰 EXAMPLE: letter-spacing:0.08em adds small gaps BETWEEN
+   each letter — like writing "R E S E A R C H E R S" instead
+   of "RESEARCHERS" — this is a common design trick for small
+   uppercase labels, it makes them feel more elegant and easier
+   to read at tiny sizes. */
+
+/* ════════════════════════════════════════════════════════
+   CATEGORIES SECTION
+   ════════════════════════════════════════════════════════ */
+
+.cats-sec {
+  position: relative;
+  z-index: 10;
+  background: rgba(8, 6, 0, 0.9);
+  border-top: 1px solid rgba(255, 210, 0, 0.06);
+  padding: 80px 48px;
+}
+
+.cats-head {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.cats-head h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 8px;
+  display: inline-block;
+  position: relative;
+}
+
+.cats-head h2::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #FFD700, transparent);
+  animation: lineGrow 2s ease-in-out infinite alternate;
+}
+@keyframes lineGrow {
+  from { width: 40px; opacity: 0.6; }
+  to { width: 120px; opacity: 1; }
+}
+/* 🍰 EXAMPLE: this little decorative line under the heading
+   continuously grows and shrinks between 40px and 120px wide,
+   fading in and out slightly — like a glowing underline that
+   gently breathes, drawing subtle attention to the heading
+   above it without being distracting. */
+
+.cats-head p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 12px;
+}
+
+/* ── SEARCH BAR ──────────────────────────────────────────── */
+
+.cat-search-wrap {
+  max-width: 500px;
+  margin: 0 auto 40px;
+  position: relative;
+}
+/* 🍰 EXAMPLE: "0 auto 40px" is shorthand margin syntax meaning
+   top:0, left/right:auto (centres it), bottom:40px — this is
+   a quick way to centre an element AND add space below it in
+   one line, instead of writing three separate margin rules. */
+
+.cat-search {
+  width: 100%;
+  padding: 14px 56px 14px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 210, 0, 0.2);
+  border-radius: 14px;
+  color: white;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+/* 🍰 EXAMPLE: padding "14px 56px 14px 20px" is FOUR separate
+   values: top, right, bottom, left. The RIGHT side has extra
+   padding (56px) specifically to leave room for the search
+   button icon that sits inside the input box without
+   overlapping the typed text.
+   outline:none removes the default blue/black focus ring
+   that browsers automatically draw around inputs — we replace
+   it with our own custom glow effect below instead. */
+
+.cat-search::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+/* 🍰 EXAMPLE: ::placeholder specifically styles the greyed-out
+   hint text ("Search research fields...") that disappears once
+   you start typing — without this rule, it would use the same
+   bright white colour as real typed text, which looks confusing. */
+
+.cat-search:focus {
+  border-color: rgba(255, 210, 0, 0.5);
+  background: rgba(255, 210, 0, 0.04);
+  box-shadow: 0 0 30px rgba(255, 210, 0, 0.08), 0 0 0 3px rgba(255, 210, 0, 0.05);
+}
+/* 🍰 EXAMPLE: :focus activates the MOMENT you click into the
+   search box and start typing — the border glows brighter
+   yellow and a soft halo appears around the whole box, clearly
+   showing "you are now typing here" without using the default
+   ugly browser outline. */
+
+.search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #FFE234, #FFB800);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(255, 210, 0, 0.35);
+}
+/* 🍰 EXAMPLE: position:absolute + right:8px places this button
+   INSIDE the search box, pinned to its right edge, floating on
+   top of the input field rather than sitting next to it as a
+   separate box. top:50% + translateY(-50%) is the standard
+   trick to vertically centre something exactly in the middle
+   of its parent, regardless of the parent's height. */
+
+.search-btn:hover {
+  transform: translateY(-50%) scale(1.15) rotate(5deg);
+  box-shadow: 0 8px 24px rgba(255, 210, 0, 0.55);
+}
+.search-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+/* 🍰 EXAMPLE: cubic-bezier(0.34, 1.56, 0.64, 1) is a special
+   timing curve that makes the hover animation slightly
+   OVERSHOOT before settling — like a spring or rubber band
+   bouncing past its target and snapping back, giving the
+   button a playful, "highly standard premium" bounce feel
+   exactly like you asked for. */
+
+/* ── FILTER CHIPS ────────────────────────────────────────── */
+
+.filter-chips {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 36px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* 🍰 EXAMPLE: flex-wrap:wrap allows the chip buttons to drop
+   down to a SECOND row automatically if the screen is too
+   narrow to fit them all on one line — like text wrapping in
+   a word processor instead of running off the edge of the page. */
+
+.chip {
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+}
+/* 🍰 EXAMPLE: white-space:nowrap forces the chip's text to
+   stay on ONE line no matter what, even if it's a longer label
+   like "Law & Social" — without this, long text might
+   accidentally wrap onto two lines and break the pill shape. */
+
+.chip:hover,
+.chip.active {
+  color: #FFD700;
+  border-color: rgba(255, 210, 0, 0.4);
+  background: rgba(255, 210, 0, 0.08);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 16px rgba(255, 210, 0, 0.15);
+}
+.chip.active {
+  box-shadow: 0 0 20px rgba(255, 210, 0, 0.2);
+}
+/* 🍰 EXAMPLE: writing ".chip:hover, .chip.active" together
+   with a comma means "apply these same styles whether you're
+   HOVERING with your mouse, OR whether JavaScript has marked
+   this chip as the currently selected/active one" — saves
+   repeating the same CSS rules twice. */
+
+/* ── CATEGORY GRID ───────────────────────────────────────── */
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  max-width: 940px;
+  margin: 0 auto;
+}
+/* 🍰 EXAMPLE: this is the responsive grid magic trick.
+   "auto-fit" tells the browser "fit as many columns as
+   possible". "minmax(150px, 1fr)" tells each column "never go
+   below 150px wide, but stretch equally to fill any leftover
+   space". Result: on a wide desktop screen you might get 6
+   columns; on a narrow phone screen it automatically drops to
+   2 columns — all WITHOUT writing a single @media query. */
+
+.cat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.cat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(255, 210, 0, 0.06), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.cat-card:hover::before {
+  opacity: 1;
+}
+/* 🍰 EXAMPLE: this invisible glow layer sits ON TOP of the
+   card but stays at opacity:0 (invisible) until you hover —
+   then it fades in, creating a soft golden glow effect washing
+   over the whole card, like a spotlight turning on. */
+
+.cat-card:hover {
+  transform: translateY(-12px) scale(1.04);
+  border-color: rgba(255, 210, 0, 0.3);
+  background: rgba(255, 210, 0, 0.04);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 210, 0, 0.08);
+}
+
+.cat-card.hidden {
+  display: none;
+}
+/* 🍰 EXAMPLE: this is what makes the search/filter actually
+   WORK visually. Our JavaScript adds the class "hidden" to
+   cards that don't match the search/filter, and this CSS rule
+   simply makes them disappear completely (display:none removes
+   them from the page entirely, unlike opacity:0 which would
+   still leave invisible empty space). */
+
+.cat-icon-box {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 210, 0, 0.15);
+  transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cat-card:hover .cat-icon-box {
+  transform: rotate(-12deg) scale(1.15);
+  border-color: rgba(255, 210, 0, 0.5);
+  box-shadow: 0 8px 24px rgba(255, 210, 0, 0.15);
+}
+/* 🍰 EXAMPLE: ".cat-card:hover .cat-icon-box" means "when you
+   hover the OUTER card, apply this style to the icon box
+   INSIDE it" — a parent-triggers-child hover effect. The icon
+   tilts and grows when you hover the whole card, even though
+   your mouse might not be directly over the icon itself. */
+
+.cat-icon-box svg {
+  width: 38px;
+  height: 38px;
+}
+
+.cat-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
+  text-align: center;
+  transition: all 0.3s;
+  line-height: 1.3;
+}
+.cat-card:hover .cat-name {
+  color: #FFD700;
+}
+
+/* ── NO RESULTS MESSAGE ──────────────────────────────────── */
+
+.no-results {
+  display: none;
+  text-align: center;
+  padding: 40px;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 14px;
+  grid-column: 1 / -1;
+}
+.no-results.show {
+  display: block;
+}
+/* 🍰 EXAMPLE: grid-column:1/-1 is a special CSS Grid trick
+   meaning "stretch this element across EVERY column, from the
+   very first one all the way to the very last one" — so the
+   "no results" message spans the full width of the grid
+   instead of squeezing into just one tiny column slot. */
+
+/* ── VIEW ALL BUTTON ─────────────────────────────────────── */
+
+.view-all-wrap {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.btn-view-all {
+  padding: 13px 32px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFD700;
+  background: transparent;
+  border: 1.5px solid rgba(255, 210, 0, 0.3);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  letter-spacing: 0.02em;
+}
+
+.btn-view-all::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 210, 0, 0.12), rgba(255, 180, 0, 0.08));
+  transition: width 0.4s ease;
+}
+.btn-view-all:hover::before {
+  width: 100%;
+}
+/* 🍰 EXAMPLE: this fills the button background from LEFT to
+   RIGHT like a progress bar loading, only on hover — instead
+   of the whole background changing colour instantly, it
+   visually "pours in" from the left edge across to the right. */
+
+.btn-view-all:hover {
+  border-color: rgba(255, 210, 0, 0.6);
+  box-shadow: 0 0 30px rgba(255, 210, 0, 0.15), inset 0 0 30px rgba(255, 210, 0, 0.03);
+  transform: translateY(-2px);
+  letter-spacing: 0.06em;
+}
+.btn-view-all:active {
+  transform: scale(0.98);
+}
+/* 🍰 EXAMPLE: letter-spacing increasing from 0.02em to 0.06em
+   on hover makes the button text subtly "stretch wider" — a
+   small premium detail used on high-end websites that most
+   people don't consciously notice but makes buttons feel more
+   expensive and polished. */
+
+/* ════════════════════════════════════════════════════════
+   FOOTER
+   ════════════════════════════════════════════════════════ */
+
+.footer-sec {
+  background: linear-gradient(135deg, #060400, #0d1b2e);
+  padding: 50px 48px 28px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 210, 0, 0.08);
+  position: relative;
+  z-index: 10;
+}
+
+.footer-sec h3 {
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  opacity: 0.9;
+}
+
+.soc-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.soc-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 210, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: rgba(255, 210, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.soc-btn:hover {
+  background: rgba(255, 210, 0, 0.15);
+  border-color: rgba(255, 210, 0, 0.5);
+  transform: translateY(-7px) scale(1.2) rotate(-5deg);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 210, 0, 0.2);
+  color: #FFD700;
+}
+/* 🍰 EXAMPLE: combining translateY (lift up) + scale (grow
+   bigger) + rotate (tilt slightly) in ONE transform property
+   creates a playful "pop and spin" effect on hover — like a
+   button doing a tiny excited jump when you point at it. */
+
+.ft-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 22px;
+  margin-bottom: 20px;
+}
+
+.ft-links a {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.25s;
+  position: relative;
+}
+
+.ft-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #FFD700;
+  transition: width 0.3s;
+}
+.ft-links a:hover {
+  color: #FFD700;
+}
+.ft-links a:hover::after {
+  width: 100%;
+}
+
+.ft-bottom {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ════════════════════════════════════════════════════════
+   SCROLL INDICATOR (the little line under hero)
+   ════════════════════════════════════════════════════════ */
+
+.scroll-ind {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  gap: 6px;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 50px;
+  background: linear-gradient(to bottom, rgba(255, 210, 0, 0.6), transparent);
+  animation: scrollAnim 2s ease-in-out infinite;
+}
+@keyframes scrollAnim {
+  0% { transform: scaleY(0); transform-origin: top; }
+  50% { transform: scaleY(1); transform-origin: top; }
+  51% { transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+/* 🍰 EXAMPLE: transform-origin controls WHERE a scale animation
+   "anchors" from. First the line grows DOWNWARD from its top
+   point (like a blind unrolling). Then we switch the anchor
+   to the BOTTOM, and it shrinks back upward from there — this
+   creates a "draw down, then erase upward" looping effect,
+   like a cursor blinking in a text editor but in line form. */
+
+.scroll-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #FFD700;
+  box-shadow: 0 0 8px rgba(255, 210, 0, 0.8);
+  animation: dotPulse 2s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.8); }
+}
+
+/* ════════════════════════════════════════════════════════
+   RESPONSIVE — phones and tablets
+   ════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .hero-card { flex-direction: column; }
+  .hero-right { width: 100%; height: 220px; }
+  .nav-links { display: none; }
+  .hero-title { font-size: 30px; }
+  .section { padding: 90px 20px 40px; }
+  .cats-sec { padding: 60px 20px; }
+  .stats-bar { flex-wrap: wrap; gap: 16px; }
+  .stat { border-right: none; padding: 0 20px; }
+}
+/* 🍰 EXAMPLE: @media (max-width:768px) means "ONLY apply these
+   rules when the screen is 768 pixels wide or NARROWER" — this
+   is how the same website automatically rearranges itself to
+   look good on a phone (where 320px hero panels don't fit
+   beside text) versus a desktop monitor. On phones, the hero
+   card stacks vertically instead of side-by-side, and the nav
+   links hide completely (you'd replace this with a hamburger
+   menu icon in a more advanced version later). */
