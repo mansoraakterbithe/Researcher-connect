@@ -1,0 +1,192 @@
+/* ============================================================
+   FILE: src/components/Footer.css
+   Shared footer — used on every page
+   ============================================================ */
+
+.rc-footer {
+  background: linear-gradient(135deg, #060400, #0d1b2e);
+  border-top: 1px solid rgba(255, 210, 0, 0.08);
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+
+/* Gold shimmer line at very top of footer */
+.rc-footer-topline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,210,0,0.4), transparent);
+  position: absolute;
+  top: 0; left: 0; right: 0;
+}
+
+.rc-footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 32px 24px;
+}
+
+/* 4 COLUMN GRID */
+.rc-footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+/* ── BRAND COLUMN ─────────────────────────────────────────── */
+.rc-footer-brand {}
+
+.rc-footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.rc-footer-logo-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+}
+.rc-footer-logo-text span { color: #FFD700; }
+
+.rc-footer-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.7;
+  max-width: 260px;
+  margin-bottom: 16px;
+}
+
+/* UK BADGE */
+.rc-footer-uk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 210, 0, 0.07);
+  border: 1px solid rgba(255, 210, 0, 0.15);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  color: rgba(255, 210, 0, 0.7);
+  margin-bottom: 18px;
+}
+
+.rc-footer-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #FFD700;
+  animation: ftBlink 1.5s ease-in-out infinite;
+}
+@keyframes ftBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* SOCIAL BUTTONS */
+.rc-footer-socials {
+  display: flex;
+  gap: 10px;
+}
+
+.rc-footer-soc-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 210, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: rgba(255, 210, 0, 0.04);
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.rc-footer-soc-btn:hover {
+  background: rgba(255, 210, 0, 0.15);
+  border-color: rgba(255, 210, 0, 0.45);
+  transform: translateY(-4px) scale(1.15);
+  box-shadow: 0 8px 20px rgba(255, 210, 0, 0.15);
+}
+.rc-footer-soc-btn:hover svg {
+  fill: #FFD700;
+  stroke: #FFD700;
+}
+
+/* ── LINK COLUMNS ─────────────────────────────────────────── */
+.rc-footer-col h4 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 14px;
+}
+
+.rc-footer-col a {
+  display: block;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 9px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  position: relative;
+  padding-left: 0;
+}
+.rc-footer-col a::before {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #FFD700;
+  transition: width 0.3s;
+}
+.rc-footer-col a:hover {
+  color: rgba(255, 255, 255, 0.8);
+  padding-left: 4px;
+}
+.rc-footer-col a:hover::before { width: 100%; }
+
+/* ── BOTTOM BAR ───────────────────────────────────────────── */
+.rc-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.rc-footer-copy {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.rc-footer-bottom-links {
+  display: flex;
+  gap: 20px;
+}
+.rc-footer-bottom-links a {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.rc-footer-bottom-links a:hover { color: rgba(255, 255, 255, 0.6); }
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .rc-footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+}
+@media (max-width: 600px) {
+  .rc-footer-grid { grid-template-columns: 1fr; }
+  .rc-footer-inner { padding: 32px 20px 20px; }
+}

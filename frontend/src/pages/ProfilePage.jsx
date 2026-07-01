@@ -1,12 +1,8 @@
-// ============================================================
-// FILE: src/pages/ProfilePage.jsx
-// ============================================================
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/ProfilePage.css';
+import Footer from '../components/Footer';
 
-// ── LOGO (same across all pages) ─────────────────────────────
 function Logo() {
   return (
     <svg viewBox="0 0 48 48" width="32" height="32">
@@ -28,8 +24,8 @@ function Logo() {
   );
 }
 
-// ── SAMPLE DATA — replace with real API data later ────────────
-const PROFILE = {
+// ── STUDENT PROFILE DATA ──────────────────────────────────────
+const STUDENT_PROFILE = {
   name: 'Mansora Akter Bithe',
   initials: 'M',
   role: 'student',
@@ -42,15 +38,14 @@ const PROFILE = {
   impactScore: 782,
   followers: 47,
   following: 12,
-  papers: 1,
-  endorsements: 8,
+  papersCount: 1,
+  endorsementsCount: 8,
   status: 'active',
-  // Student specific
   seekingSupervisor: true,
   targetDegree: 'PhD',
   fundingNeeded: 'Full scholarship preferred',
   availableFrom: 'September 2026',
-  about: 'Data Scientist and AI researcher with a published IEEE paper on skin disease classification using deep learning (ICCIT 2024). Currently completing BSc Top-Up in Data Science & AI at UWE Bristol. My research focuses on medical image analysis, explainable AI, and building tools that make AI accessible in clinical settings.',
+  about: 'Data Scientist and AI researcher with a published IEEE paper on skin disease classification (ICCIT 2024). Currently completing BSc Top-Up in Data Science & AI at UWE Bristol. My research focuses on medical image analysis, explainable AI, and building tools that make AI accessible in clinical settings. I am building ResearchConnect — a UK academic research matching platform.',
   skills: [
     { name: 'Python', endorsed: true },
     { name: 'TensorFlow', endorsed: true },
@@ -69,7 +64,7 @@ const PROFILE = {
     { label: '🔬 Research Collaboration', on: true },
     { label: '📚 Co-authorship', on: true },
     { label: '🎓 PhD Opportunities', on: true },
-    { label: '👨‍🏫 Supervision', on: false },
+    { label: '🌍 International Projects', on: false },
   ],
   dnaBars: [
     { label: 'AI/ML', pct: 90, color: 'linear-gradient(to top,#1B3A6B,#5BA4E6)' },
@@ -100,11 +95,11 @@ const PROFILE = {
     {
       year: '2024', color: '#5BA4E6',
       title: 'SAM Segmentation on ISIC 2018',
-      desc: 'Zero-shot segmentation using Meta\'s Segment Anything Model (SAM). Mean IoU 0.744 vs Otsu baseline 0.570.',
-      tag: 'Advanced ML Project', tagColor: 'blue',
+      desc: 'Zero-shot segmentation using Meta\'s Segment Anything Model. Mean IoU 0.744 vs Otsu baseline 0.570.',
+      tag: 'ML Project', tagColor: 'blue',
       popup: {
         title: 'SAM: Zero-Shot Skin Lesion Segmentation',
-        body: 'Applied Meta\'s Segment Anything Model (SAM, ICCV 2023) to ISIC 2018 skin lesion dataset without any fine-tuning. Achieved mean IoU of 0.744 compared to Otsu thresholding baseline of 0.570 — 30% improvement.',
+        body: 'Applied Meta\'s Segment Anything Model (SAM) to ISIC 2018 dataset without fine-tuning. Mean IoU 0.744 vs Otsu 0.570 — 30% improvement over baseline.',
         stats: [{ val: '0.744', label: 'Mean IoU' }, { val: '0.570', label: 'Baseline' }, { val: '+30%', label: 'Improvement' }],
       },
     },
@@ -115,19 +110,8 @@ const PROFILE = {
       tag: 'Research Project', tagColor: 'green',
       popup: {
         title: 'Early Warning Detection of Ranking Volatility',
-        body: 'UWE resit project. LightGBM regression model + volatility classifier with SHAP explainability. Both UWE Bristol decline events (2020, 2024) correctly flagged at-risk one year in advance. Flask demo with glassmorphism UI.',
-        stats: [{ val: '100%', label: 'Event Detection' }, { val: 'LightGBM', label: 'Model' }, { val: 'SHAP', label: 'Explainability' }],
-      },
-    },
-  ],
-  papers: [
-    {
-      title: 'Deep Learning for Skin Disease Classification Using Dermoscopic Images',
-      venue: 'IEEE ICCIT 2024', year: '2024',
-      popup: {
-        title: 'Skin Disease Classification — IEEE ICCIT 2024',
-        body: 'First-author paper. Comparative study of CNN architectures for automated dermatology. EfficientNet-B4 best performer with 94.3% accuracy.',
-        stats: [{ val: '94.3%', label: 'Accuracy' }, { val: 'First Author', label: 'Position' }, { val: 'Published', label: 'Status' }],
+        body: 'LightGBM regression model + volatility classifier with SHAP explainability. Both UWE Bristol decline events (2020, 2024) correctly flagged at-risk one year in advance.',
+        stats: [{ val: '100%', label: 'Event Detection' }, { val: 'LightGBM', label: 'Model' }, { val: 'SHAP', label: 'XAI' }],
       },
     },
   ],
@@ -144,30 +128,110 @@ const PROFILE = {
   ],
 };
 
-// SUPERVISOR SAMPLE (used when viewing a professor's profile)
-const SUPERVISOR_AVAILABILITY = {
-  status: 'open',
-  // 'open' = green, 'limited' = yellow, 'closed' = red
-  statusLabel: 'Open to Students',
-  taking: true,
-  fundedPhD: true,
-  fundedSlots: 2,
-  scholarshipSupport: 'Full scholarship available for exceptional candidates',
-  projectType: 'Both (my projects + student-proposed)',
-  levels: ['Masters', 'PhD'],
-  responseTime: '3-5 days',
-  requirements: 'Strong Python skills, some ML background, passion for medical AI',
-  deadline: 'Applications open — rolling basis',
+// ── SUPERVISOR PROFILE DATA ───────────────────────────────────
+const SUPERVISOR_PROFILE = {
+  name: 'Dr. Sarah Chen',
+  initials: 'Dr',
+  role: 'supervisor',
+  verified: true,
+  university: 'University College London',
+  department: 'Medical AI Lab',
+  location: 'London, United Kingdom',
+  remote: true,
+  matchScore: 87,
+  impactScore: 2840,
+  followers: 312,
+  following: 45,
+  papersCount: 24,
+  endorsementsCount: 67,
+  status: 'active',
+  about: 'Professor of Medical AI at UCL. My research focuses on Vision Transformers and explainable deep learning for clinical decision support. 24 peer-reviewed publications including MICCAI, NeurIPS and Nature Medicine. Currently leading a £2.1M UKRI-funded project on AI-assisted radiology.',
+  researchAreas: ['Medical Imaging', 'Vision Transformers', 'Explainable AI', 'Clinical Decision Support', 'Radiology AI'],
+  availability: {
+    status: 'open',
+    statusLabel: 'Open to Students',
+    takingStudents: true,
+    fundedPhD: true,
+    fundedSlots: 2,
+    scholarshipSupport: 'Full UKRI scholarship available for exceptional candidates. Covers tuition + £18,000/year stipend.',
+    projectType: 'Both my projects and student-proposed topics',
+    levels: ['Masters', 'PhD'],
+    responseTime: '3-5 working days',
+    requirements: 'Strong Python and ML background, ideally some experience with medical imaging or computer vision. UK/EU students preferred but international considered.',
+    deadline: 'Rolling applications — no fixed deadline',
+    startDate: 'October 2026 or January 2027',
+  },
+  openTo: [
+    { label: '🎓 PhD Supervision', on: true },
+    { label: '🔬 Research Collaboration', on: true },
+    { label: '📚 Co-authorship', on: true },
+    { label: '🏫 Masters Students', on: true },
+  ],
+  dnaBars: [
+    { label: 'AI/ML', pct: 95, color: 'linear-gradient(to top,#1B3A6B,#5BA4E6)' },
+    { label: 'Medicine', pct: 90, color: 'linear-gradient(to top,#1B6B3A,#34d399)' },
+    { label: 'Vision', pct: 85, color: 'linear-gradient(to top,#4A2C6B,#a78bfa)' },
+    { label: 'XAI', pct: 70, color: 'linear-gradient(to top,#8B6914,#FFD700)' },
+    { label: 'NLP', pct: 40, color: 'linear-gradient(to top,#2C5AA0,#7CC4F0)' },
+    { label: 'Stats', pct: 55, color: 'linear-gradient(to top,#6B1B3A,#f87171)' },
+  ],
+  impactBreakdown: [
+    { label: 'Publications', val: 1200, pct: 85, color: 'linear-gradient(90deg,#FFD700,#FFB800)' },
+    { label: 'Citations', val: 800, pct: 75, color: 'linear-gradient(90deg,#5BA4E6,#2C5AA0)' },
+    { label: 'Supervision', val: 540, pct: 60, color: 'linear-gradient(90deg,#34d399,#2CA05A)' },
+    { label: 'Connections', val: 300, pct: 45, color: 'linear-gradient(90deg,#a78bfa,#7B3FA0)' },
+  ],
+  recentPapers: [
+    {
+      title: 'Vision Transformers for Zero-Shot Medical Image Segmentation',
+      venue: 'MICCAI 2026', year: '2026',
+      popup: {
+        title: 'ViT for Zero-Shot Medical Segmentation',
+        body: 'Novel application of Vision Transformers to medical image segmentation without task-specific training. Tested on 5 clinical datasets including chest X-ray, MRI brain, and dermoscopy.',
+        stats: [{ val: 'MICCAI', label: 'Venue' }, { val: '91.2%', label: 'Dice Score' }, { val: '2026', label: 'Year' }],
+      },
+    },
+    {
+      title: 'Explainable AI for Clinical Decision Support — SHAP meets Attention',
+      venue: 'Nature Medicine 2025', year: '2025',
+      popup: {
+        title: 'XAI for Clinical Decision Support',
+        body: 'Integrating SHAP explanations with attention mechanisms in ResNet-50 for chest X-ray diagnosis. Clinician-readable heatmaps validated in a 3-hospital trial.',
+        stats: [{ val: 'Nature Medicine', label: 'Venue' }, { val: '92.1%', label: 'AUC' }, { val: '3 hospitals', label: 'Trial' }],
+      },
+    },
+  ],
+  supervisedStudents: [
+    { name: 'James Kumar', degree: 'PhD', year: '2024', topic: 'Transformer-based ECG analysis' },
+    { name: 'Priya Sharma', degree: 'Masters', year: '2025', topic: 'Federated learning for radiology' },
+  ],
+  endorsementList: [
+    { skill: 'Medical Imaging AI', count: 28 },
+    { skill: 'PhD Supervision', count: 19 },
+    { skill: 'Vision Transformers', count: 24 },
+    { skill: 'Grant Writing', count: 15 },
+  ],
 };
+
+// ── CURRENT PROFILE — switch between student/supervisor here ──
+// Later this will come from your backend based on logged-in user
+// To test supervisor view: const PROFILE = STUDENT_PROFILE;
+const PROFILE = SUPERVISOR_PROFILE;
 
 function ProfilePage() {
   const navigate = useNavigate();
+  const isStudent = PROFILE.role === 'student';
+  const isSupervisor = PROFILE.role === 'supervisor';
+
   const [liked, setLiked] = useState(false);
   const [interested, setInterested] = useState(false);
   const [likeCount, setLikeCount] = useState(24);
   const [showApplyModal, setShowApplyModal] = useState(false);
-  const [applyForm, setApplyForm] = useState({ why: '', background: '', topic: '', cv: '' });
   const [applySubmitted, setApplySubmitted] = useState(false);
+  const [applyForm, setApplyForm] = useState({
+  why: '', background: '', topic: '', funding: '',
+  cv: '', statement: '', transcript: '', writing: '', reference: '', other: '',
+});
   const [activeTab, setActiveTab] = useState('about');
 
   function handleLike() {
@@ -183,7 +247,7 @@ function ProfilePage() {
   return (
     <div className="pp">
 
-      {/* ── NAV ─────────────────────────────────────────── */}
+      {/* ── NAVBAR ──────────────────────────────────────── */}
       <nav className="pp-nav">
         <div className="pp-nav-left">
           <div className="pp-logo-wrap" onClick={() => navigate('/')}>
@@ -202,12 +266,12 @@ function ProfilePage() {
           <div className="pp-nav-link">Opportunities</div>
           <div className="pp-nav-link">Connections</div>
           <button className="pp-new-btn">+ New Post</button>
-          <div className="pp-avatar-nav" onClick={() => navigate('/profile')}>M</div>
+          <div className="pp-avatar-nav">M</div>
         </div>
       </nav>
 
       {/* ── COVER ───────────────────────────────────────── */}
-      <div className="pp-cover">
+      <div className={`pp-cover ${isSupervisor ? 'supervisor' : ''}`}>
         <div className="pp-cover-orb1"/>
         <div className="pp-cover-orb2"/>
         <div className="pp-cover-grid"/>
@@ -222,14 +286,13 @@ function ProfilePage() {
 
           <div className="pp-avatar-row">
             <div className="pp-avatar-wrap">
-              <div className="pp-avatar">M</div>
-              <div className={`pp-status-dot ${PROFILE.status}`} title="Actively looking"/>
+              <div className="pp-avatar">{PROFILE.initials}</div>
+              <div className={`pp-status-dot ${PROFILE.status}`}/>
             </div>
 
             <div className="pp-header-actions">
-              {/* COMPATIBILITY BADGE */}
               <div className="pp-compat-badge">
-                <span className="pp-compat-num">94%</span>
+                <span className="pp-compat-num">{PROFILE.matchScore}%</span>
                 <div>
                   <div className="pp-compat-strong">Research Match</div>
                   <div className="pp-compat-sub">with your profile</div>
@@ -237,9 +300,18 @@ function ProfilePage() {
               </div>
 
               <div className="pp-action-row">
-                <button className="pp-btn-primary" onClick={() => setShowApplyModal(true)}>
-                  🤝 Request Collaboration
-                </button>
+                {/* STUDENT sees: Request Collaboration */}
+                {isStudent && (
+                  <button className="pp-btn-primary" onClick={() => setShowApplyModal(true)}>
+                    🤝 Request Collaboration
+                  </button>
+                )}
+                {/* SUPERVISOR sees: Apply to Work With */}
+                {isSupervisor && (
+                  <button className="pp-btn-primary pp-btn-apply" onClick={() => setShowApplyModal(true)}>
+                    🎓 Apply to Work With
+                  </button>
+                )}
                 <button className="pp-btn-secondary">💬 Message</button>
                 <button className="pp-btn-secondary" onClick={() => navigate('/profile/edit')}>
                   ✏️ Edit Profile
@@ -251,23 +323,27 @@ function ProfilePage() {
                     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
                   </svg>
                 </div>
-                <div className="pp-icon-btn" title="More">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
-                    <circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>
-                  </svg>
-                </div>
               </div>
             </div>
           </div>
 
+          {/* NAME + BADGES */}
           <div className="pp-name-section">
             <div className="pp-name">
               {PROFILE.name}
-              {PROFILE.verified && <span className="pp-verified">✓ Verified</span>}
-              <span className="pp-role-tag">🎓 Student</span>
+              {PROFILE.verified && (
+                <span className="pp-verified">
+                  {isSupervisor ? '✓ Verified Supervisor' : '✓ Verified'}
+                </span>
+              )}
+              <span className="pp-role-tag">
+                {isStudent ? '🎓 Student' : '🔬 Supervisor'}
+              </span>
             </div>
             <div className="pp-uni">{PROFILE.department} · {PROFILE.university}, UK</div>
-            <div className="pp-location">📍 {PROFILE.location} · {PROFILE.remote ? 'Open to Remote' : 'On-site only'}</div>
+            <div className="pp-location">
+              📍 {PROFILE.location} · {PROFILE.remote ? 'Open to Remote' : 'On-site only'}
+            </div>
           </div>
 
           {/* OPEN TO CHIPS */}
@@ -280,8 +356,8 @@ function ProfilePage() {
             ))}
           </div>
 
-          {/* STUDENT SEEKING SUPERVISOR BANNER */}
-          {PROFILE.seekingSupervisor && (
+          {/* STUDENT ONLY — Seeking Supervisor Banner */}
+          {isStudent && PROFILE.seekingSupervisor && (
             <div className="pp-seeking-banner">
               <div className="pp-seeking-dot"/>
               <div>
@@ -296,15 +372,43 @@ function ProfilePage() {
             </div>
           )}
 
-          {/* STATS */}
+          {/* SUPERVISOR ONLY — Quick Availability Banner */}
+          {isSupervisor && (
+            <div className="pp-avail-banner">
+              <div className={`pp-avail-banner-dot ${PROFILE.availability.status}`}/>
+              <div>
+                <div className="pp-avail-banner-title">
+                  {PROFILE.availability.status === 'open' && '🟢 Currently accepting research students'}
+                  {PROFILE.availability.status === 'limited' && '🟡 Limited spots available'}
+                  {PROFILE.availability.status === 'closed' && '🔴 Not currently taking students'}
+                </div>
+                <div className="pp-avail-banner-sub">
+                  {PROFILE.availability.fundedPhD && `${PROFILE.availability.fundedSlots} funded PhD positions available · `}
+                  Responds in {PROFILE.availability.responseTime}
+                </div>
+              </div>
+              <button className="pp-btn-primary pp-btn-apply" onClick={() => setShowApplyModal(true)}>
+                Apply Now →
+              </button>
+            </div>
+          )}
+
+          {/* STATS ROW */}
           <div className="pp-stats-row">
-            {[
-              { num: '1', label: 'Papers', color: '' },
-              { num: '94%', label: 'Match Score', color: 'gold' },
-              { num: '47', label: 'Followers', color: '' },
-              { num: '12', label: 'Following', color: '' },
-              { num: '782', label: 'Impact Score', color: 'green' },
-              { num: '8', label: 'Endorsements', color: '' },
+            {isStudent ? [
+              { num: PROFILE.papersCount.toString(), label: 'Papers', color: '' },
+              { num: `${PROFILE.matchScore}%`, label: 'Match Score', color: 'gold' },
+              { num: PROFILE.followers.toString(), label: 'Followers', color: '' },
+              { num: PROFILE.following.toString(), label: 'Following', color: '' },
+              { num: PROFILE.impactScore.toString(), label: 'Impact Score', color: 'green' },
+              { num: PROFILE.endorsementsCount.toString(), label: 'Endorsements', color: '' },
+            ] : [
+              { num: PROFILE.papersCount.toString(), label: 'Publications', color: 'gold' },
+              { num: PROFILE.followers.toString(), label: 'Followers', color: '' },
+              { num: PROFILE.availability.fundedSlots.toString(), label: 'Funded Slots', color: 'green' },
+              { num: PROFILE.supervisedStudents.length.toString(), label: 'Students Supervised', color: '' },
+              { num: PROFILE.impactScore.toString(), label: 'Impact Score', color: 'green' },
+              { num: PROFILE.endorsementsCount.toString(), label: 'Endorsements', color: '' },
             ].map(s => (
               <div key={s.label} className="pp-stat">
                 <div className={`pp-stat-num ${s.color}`}>{s.num}</div>
@@ -373,6 +477,18 @@ function ProfilePage() {
                 <p className="pp-about-text">{PROFILE.about}</p>
               </div>
 
+              {/* SUPERVISOR ONLY — Research Areas */}
+              {isSupervisor && (
+                <div className="pp-card">
+                  <div className="pp-card-head">Research Areas</div>
+                  <div className="pp-skills-wrap">
+                    {PROFILE.researchAreas.map(area => (
+                      <span key={area} className="pp-skill">{area}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* IMPACT SCORE */}
               <div className="pp-card">
                 <div className="pp-card-head">
@@ -393,7 +509,7 @@ function ProfilePage() {
                         strokeLinecap="round" strokeDasharray="226" strokeDashoffset="57"
                         transform="rotate(-90 45 45)"/>
                     </svg>
-                    <div className="pp-impact-center">782</div>
+                    <div className="pp-impact-center">{PROFILE.impactScore}</div>
                   </div>
                   <div className="pp-impact-bars">
                     {PROFILE.impactBreakdown.map(item => (
@@ -419,11 +535,7 @@ function ProfilePage() {
                   {PROFILE.dnaBars.map(bar => (
                     <div key={bar.label} className="pp-dna-col">
                       <div className="pp-dna-bar-wrap">
-                        <div
-                          className="pp-dna-bar"
-                          style={{ height: `${bar.pct}%`, background: bar.color }}
-                          title={`${bar.label}: ${bar.pct}%`}
-                        />
+                        <div className="pp-dna-bar" style={{ height: `${bar.pct}%`, background: bar.color }}/>
                       </div>
                       <div className="pp-dna-lbl">{bar.label}</div>
                     </div>
@@ -431,100 +543,173 @@ function ProfilePage() {
                 </div>
               </div>
 
-              {/* SKILLS */}
-              <div className="pp-card">
-                <div className="pp-card-head">Skills & Tools <span className="pp-card-edit">✏️ Edit</span></div>
-                <div className="pp-skills-wrap">
-                  {PROFILE.skills.map(skill => (
-                    <span key={skill.name} className={`pp-skill ${skill.endorsed ? 'endorsed' : ''}`}>
-                      {skill.name}{skill.endorsed ? ' ✓' : ''}
-                    </span>
-                  ))}
+              {/* STUDENT ONLY — Skills */}
+              {isStudent && (
+                <div className="pp-card">
+                  <div className="pp-card-head">Skills & Tools <span className="pp-card-edit">✏️ Edit</span></div>
+                  <div className="pp-skills-wrap">
+                    {PROFILE.skills.map(skill => (
+                      <span key={skill.name} className={`pp-skill ${skill.endorsed ? 'endorsed' : ''}`}>
+                        {skill.name}{skill.endorsed ? ' ✓' : ''}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* RESEARCH JOURNEY TIMELINE */}
-              <div className="pp-card">
-                <div className="pp-card-head">Research Journey <span className="pp-card-edit">✏️ Edit</span></div>
-                <div className="pp-timeline">
-                  {PROFILE.timeline.map((item, i) => (
-                    <div key={i} className="pp-tl-wrap">
-                      <div className="pp-tl-item">
-                        <div className="pp-tl-dot" style={{ borderColor: item.color, boxShadow: `0 0 8px ${item.color}60` }}/>
-                        <div className="pp-tl-year" style={{ color: item.color }}>{item.year}</div>
-                        <div className="pp-tl-title">{item.title}</div>
-                        <div className="pp-tl-desc">{item.desc}</div>
-                        <span className="pp-tl-tag" style={{
-                          background: item.tagColor === 'green' ? 'rgba(52,211,153,0.08)' : 'rgba(91,164,230,0.08)',
-                          borderColor: item.tagColor === 'green' ? 'rgba(52,211,153,0.2)' : 'rgba(91,164,230,0.2)',
-                          color: item.tagColor === 'green' ? '#34d399' : '#5BA4E6',
-                        }}>
-                          {item.tag}
-                        </span>
+              {/* STUDENT ONLY — Research Journey Timeline */}
+              {isStudent && (
+                <div className="pp-card">
+                  <div className="pp-card-head">Research Journey <span className="pp-card-edit">✏️ Edit</span></div>
+                  <div className="pp-timeline">
+                    {PROFILE.timeline.map((item, i) => (
+                      <div key={i} className="pp-tl-wrap">
+                        <div className="pp-tl-item">
+                          <div className="pp-tl-dot" style={{ borderColor: item.color, boxShadow: `0 0 8px ${item.color}60` }}/>
+                          <div className="pp-tl-year" style={{ color: item.color }}>{item.year}</div>
+                          <div className="pp-tl-title">{item.title}</div>
+                          <div className="pp-tl-desc">{item.desc}</div>
+                          <span className="pp-tl-tag" style={{
+                            background: item.tagColor === 'green' ? 'rgba(52,211,153,0.08)' : 'rgba(91,164,230,0.08)',
+                            borderColor: item.tagColor === 'green' ? 'rgba(52,211,153,0.2)' : 'rgba(91,164,230,0.2)',
+                            color: item.tagColor === 'green' ? '#34d399' : '#5BA4E6',
+                          }}>
+                            {item.tag}
+                          </span>
+                        </div>
+                        <div className="pp-popup">
+                          <div className="pp-popup-title">{item.popup.title}</div>
+                          <div className="pp-popup-body">{item.popup.body}</div>
+                          <div className="pp-popup-stats">
+                            {item.popup.stats.map(s => (
+                              <div key={s.label} className="pp-popup-stat">
+                                <strong>{s.val}</strong>
+                                <span>{s.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="pp-popup-hint">🔍 Click to read more</div>
+                        </div>
                       </div>
-                      {/* HOVER POPUP */}
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* SUPERVISOR ONLY — Recent Papers with popup */}
+              {isSupervisor && (
+                <div className="pp-card">
+                  <div className="pp-card-head">Recent Publications</div>
+                  {PROFILE.recentPapers.map((paper, i) => (
+                    <div key={i} className="pp-tl-wrap">
+                      <div className="pp-paper-item">
+                        <div className="pp-paper-title">{paper.title}</div>
+                        <div className="pp-paper-meta">{paper.venue} · {paper.year}</div>
+                        <div className="pp-paper-tags">
+                          <span className="pp-ptag">Lead Author</span>
+                          <span className="pp-ptag green">Published</span>
+                        </div>
+                      </div>
                       <div className="pp-popup">
-                        <div className="pp-popup-title">{item.popup.title}</div>
-                        <div className="pp-popup-body">{item.popup.body}</div>
+                        <div className="pp-popup-title">{paper.popup.title}</div>
+                        <div className="pp-popup-body">{paper.popup.body}</div>
                         <div className="pp-popup-stats">
-                          {item.popup.stats.map(s => (
+                          {paper.popup.stats.map(s => (
                             <div key={s.label} className="pp-popup-stat">
                               <strong>{s.val}</strong>
                               <span>{s.label}</span>
                             </div>
                           ))}
                         </div>
-                        <div className="pp-popup-hint">🔍 Hover to explore · Click to read more</div>
+                        <div className="pp-popup-hint">📄 Click to read full paper</div>
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
+              )}
 
-              {/* READING LIST */}
-              <div className="pp-card">
-                <div className="pp-card-head">📚 Reading List <span className="pp-card-edit">✏️ Edit</span></div>
-                <div className="pp-reading-list">
-                  {PROFILE.readingList.map((paper, i) => (
-                    <div key={i} className="pp-reading-item">
-                      <div className="pp-reading-title">{paper.title}</div>
-                      <div className="pp-reading-meta">{paper.venue} · Read {paper.date}</div>
+              {/* SUPERVISOR ONLY — Students Supervised */}
+              {isSupervisor && (
+                <div className="pp-card">
+                  <div className="pp-card-head">Students Supervised</div>
+                  {PROFILE.supervisedStudents.map((s, i) => (
+                    <div key={i} className="pp-supervised-item">
+                      <div className="pp-supervised-avatar">{s.name.split(' ').map(n => n[0]).join('')}</div>
+                      <div>
+                        <div className="pp-supervised-name">{s.name}</div>
+                        <div className="pp-supervised-meta">{s.degree} · {s.year} · {s.topic}</div>
+                      </div>
                     </div>
                   ))}
                 </div>
-              </div>
+              )}
+
+              {/* STUDENT ONLY — Reading List */}
+              {isStudent && (
+                <div className="pp-card">
+                  <div className="pp-card-head">📚 Reading List <span className="pp-card-edit">✏️ Edit</span></div>
+                  <div className="pp-reading-list">
+                    {PROFILE.readingList.map((paper, i) => (
+                      <div key={i} className="pp-reading-item">
+                        <div className="pp-reading-title">{paper.title}</div>
+                        <div className="pp-reading-meta">{paper.venue} · Read {paper.date}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </>
           )}
 
           {/* PAPERS TAB */}
           {activeTab === 'papers' && (
             <div className="pp-card">
-              <div className="pp-card-head">Published Papers</div>
-              {PROFILE.papers.map((paper, i) => (
-                <div key={i} className="pp-tl-wrap">
-                  <div className="pp-paper-item">
-                    <div className="pp-paper-title">{paper.title}</div>
-                    <div className="pp-paper-meta">{paper.venue} · {paper.year}</div>
-                    <div className="pp-paper-tags">
-                      <span className="pp-ptag">First Author</span>
-                      <span className="pp-ptag green">Published</span>
-                    </div>
-                  </div>
-                  <div className="pp-popup">
-                    <div className="pp-popup-title">{paper.popup.title}</div>
-                    <div className="pp-popup-body">{paper.popup.body}</div>
-                    <div className="pp-popup-stats">
-                      {paper.popup.stats.map(s => (
-                        <div key={s.label} className="pp-popup-stat">
-                          <strong>{s.val}</strong>
-                          <span>{s.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="pp-popup-hint">📄 Click to read full paper</div>
-                  </div>
+              <div className="pp-card-head">
+                {isStudent ? 'Published Papers' : 'All Publications'}
+              </div>
+              <div className="pp-empty-state">
+                <div className="pp-empty-icon">📄</div>
+                <div className="pp-empty-text">
+                  {isStudent
+                    ? 'Papers you publish will appear here'
+                    : 'Full publication list coming soon'}
                 </div>
-              ))}
+                <button className="pp-empty-btn">+ Add Paper</button>
+              </div>
+            </div>
+          )}
+
+          {/* PROJECTS TAB */}
+          {activeTab === 'projects' && (
+            <div className="pp-card">
+              <div className="pp-card-head">
+                {isStudent ? 'My Projects' : 'Active Research Projects'}
+              </div>
+              <div className="pp-empty-state">
+                <div className="pp-empty-icon">🔬</div>
+                <div className="pp-empty-text">
+                  {isStudent
+                    ? 'Projects you work on will appear here'
+                    : 'Active opportunities and projects appear here'}
+                </div>
+                <button className="pp-empty-btn">
+                  {isStudent ? '+ Add Project' : '+ Post Opportunity'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* CONNECTIONS TAB */}
+          {activeTab === 'connections' && (
+            <div className="pp-card">
+              <div className="pp-card-head">Connections</div>
+              <div className="pp-empty-state">
+                <div className="pp-empty-icon">🤝</div>
+                <div className="pp-empty-text">Connections appear here</div>
+                <button className="pp-empty-btn" onClick={() => navigate('/connections')}>
+                  Find Connections
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -532,67 +717,70 @@ function ProfilePage() {
         {/* ── RIGHT SIDEBAR ────────────────────────────── */}
         <aside className="pp-right">
 
-          {/* SUPERVISOR AVAILABILITY CARD */}
-          <div className="pp-avail-card">
-            <div className="pp-avail-head">
-              <div className="pp-avail-status open">
-                <div className="pp-avail-dot"/>
-                {SUPERVISOR_AVAILABILITY.statusLabel}
+          {/* SUPERVISOR ONLY — Full Availability Card */}
+          {isSupervisor && (
+            <div className="pp-avail-card">
+              <div className="pp-avail-head">
+                <div className={`pp-avail-status ${PROFILE.availability.status}`}>
+                  <div className="pp-avail-dot"/>
+                  {PROFILE.availability.statusLabel}
+                </div>
+                <span className="pp-avail-badge">🔬 Verified Supervisor</span>
               </div>
-              <span className="pp-avail-badge">🔬 Supervisor</span>
-            </div>
 
-            <div className="pp-avail-grid">
-              <div className="pp-avail-item">
-                <div className="pp-avail-label">PhD Supervision</div>
-                <div className="pp-avail-val green">✓ Available</div>
+              <div className="pp-avail-grid">
+                <div className="pp-avail-item">
+                  <div className="pp-avail-label">PhD Supervision</div>
+                  <div className="pp-avail-val green">✓ Available</div>
+                </div>
+                <div className="pp-avail-item">
+                  <div className="pp-avail-label">Funded Slots</div>
+                  <div className="pp-avail-val gold">{PROFILE.availability.fundedSlots} positions</div>
+                </div>
+                <div className="pp-avail-item">
+                  <div className="pp-avail-label">Levels</div>
+                  <div className="pp-avail-val">{PROFILE.availability.levels.join(', ')}</div>
+                </div>
+                <div className="pp-avail-item">
+                  <div className="pp-avail-label">Response Time</div>
+                  <div className="pp-avail-val">{PROFILE.availability.responseTime}</div>
+                </div>
               </div>
-              <div className="pp-avail-item">
-                <div className="pp-avail-label">Funded Slots</div>
-                <div className="pp-avail-val gold">{SUPERVISOR_AVAILABILITY.fundedSlots} positions</div>
+
+              <div className="pp-avail-scholarship">
+                <div className="pp-avail-label">💰 Scholarship</div>
+                <div className="pp-avail-scholarship-text">{PROFILE.availability.scholarshipSupport}</div>
               </div>
-              <div className="pp-avail-item">
-                <div className="pp-avail-label">Student Levels</div>
-                <div className="pp-avail-val">{SUPERVISOR_AVAILABILITY.levels.join(', ')}</div>
+
+              <div className="pp-avail-req">
+                <div className="pp-avail-label">Requirements</div>
+                <div className="pp-avail-req-text">{PROFILE.availability.requirements}</div>
               </div>
-              <div className="pp-avail-item">
-                <div className="pp-avail-label">Response Time</div>
-                <div className="pp-avail-val">{SUPERVISOR_AVAILABILITY.responseTime}</div>
-              </div>
+
+              <div className="pp-avail-deadline">📅 {PROFILE.availability.deadline}</div>
+              <div className="pp-avail-deadline">🗓 Start: {PROFILE.availability.startDate}</div>
+
+              <button className="pp-apply-btn" onClick={() => setShowApplyModal(true)}>
+                🎓 Apply to Work With This Supervisor
+              </button>
             </div>
+          )}
 
-            <div className="pp-avail-scholarship">
-              <div className="pp-avail-label">💰 Scholarship</div>
-              <div className="pp-avail-scholarship-text">{SUPERVISOR_AVAILABILITY.scholarshipSupport}</div>
+          {/* STUDENT ONLY — Collaboration Request Box */}
+          {isStudent && (
+            <div className="pp-collab-card">
+              <div className="pp-collab-title">🤝 Request Collaboration</div>
+              <div className="pp-collab-sub">Tell {PROFILE.name.split(' ')[0]} what you'd like to work on</div>
+              <textarea
+                className="pp-collab-textarea"
+                placeholder="e.g. I'm working on a skin lesion project and would love your input on the CNN architecture choices..."
+                rows={3}
+              />
+              <button className="pp-collab-btn">Send Request</button>
             </div>
+          )}
 
-            <div className="pp-avail-req">
-              <div className="pp-avail-label">Requirements</div>
-              <div className="pp-avail-req-text">{SUPERVISOR_AVAILABILITY.requirements}</div>
-            </div>
-
-            <div className="pp-avail-deadline">
-              📅 {SUPERVISOR_AVAILABILITY.deadline}
-            </div>
-
-            <button className="pp-apply-btn" onClick={() => setShowApplyModal(true)}>
-              🎓 Apply to Work With This Supervisor
-            </button>
-          </div>
-
-          {/* COLLABORATION REQUEST */}
-          <div className="pp-collab-card">
-            <div className="pp-collab-title">🤝 Request Collaboration</div>
-            <div className="pp-collab-sub">Tell Mansora what you'd like to work on together</div>
-            <textarea
-              className="pp-collab-textarea"
-              placeholder="e.g. I'm working on a skin lesion detection project and would love your expertise..."
-              rows={3}
-            />
-            <button className="pp-collab-btn">Send Request</button>
-          </div>
-
-          {/* ENDORSEMENTS */}
+          {/* ENDORSEMENTS — both roles */}
           <div className="pp-card">
             <div className="pp-card-head">Skill Endorsements</div>
             {PROFILE.endorsementList.map(e => (
@@ -616,9 +804,13 @@ function ProfilePage() {
             {applySubmitted ? (
               <div className="pp-modal-success">
                 <div className="pp-modal-success-icon">✓</div>
-                <div className="pp-modal-success-title">Application Sent!</div>
+                <div className="pp-modal-success-title">
+                  {isSupervisor ? 'Application Sent!' : 'Request Sent!'}
+                </div>
                 <div className="pp-modal-success-sub">
-                  Your request has been sent. You'll receive a notification when they respond — usually within 3-5 days.
+                  {isSupervisor
+                    ? 'Your application has been sent directly to their ResearchConnect inbox. You\'ll receive a notification when they respond — usually within 3-5 days.'
+                    : 'Your collaboration request has been sent. You\'ll be notified when they respond.'}
                 </div>
                 <button className="pp-modal-close-btn" onClick={() => { setShowApplyModal(false); setApplySubmitted(false); }}>
                   Done
@@ -627,17 +819,31 @@ function ProfilePage() {
             ) : (
               <>
                 <div className="pp-modal-head">
-                  <div className="pp-modal-title">Apply to Work With This Supervisor</div>
-                  <div className="pp-modal-sub">No email needed — your application goes directly to their ResearchConnect inbox</div>
+                  <div className="pp-modal-title">
+                    {isSupervisor
+                      ? `Apply to Work With ${PROFILE.name.split(' ')[0]}`
+                      : `Request Collaboration with ${PROFILE.name.split(' ')[0]}`}
+                  </div>
+                  <div className="pp-modal-sub">
+                    {isSupervisor
+                      ? 'No email needed — your application goes directly to their ResearchConnect inbox'
+                      : 'Send a direct collaboration request — no email needed'}
+                  </div>
                   <button className="pp-modal-x" onClick={() => setShowApplyModal(false)}>✕</button>
                 </div>
 
                 <form className="pp-modal-form" onSubmit={handleApplySubmit}>
                   <div className="pp-modal-field">
-                    <label className="pp-modal-label">Why do you want to work with this supervisor? *</label>
+                    <label className="pp-modal-label">
+                      {isSupervisor
+                        ? 'Why do you want to work with this supervisor? *'
+                        : 'What would you like to collaborate on? *'}
+                    </label>
                     <textarea
                       className="pp-modal-input pp-modal-ta"
-                      placeholder="Explain why their research interests align with yours..."
+                      placeholder={isSupervisor
+                        ? "Explain why their research aligns with yours..."
+                        : "Describe your project and how you'd like to collaborate..."}
                       value={applyForm.why}
                       onChange={e => setApplyForm({ ...applyForm, why: e.target.value })}
                       required rows={3}
@@ -648,48 +854,136 @@ function ProfilePage() {
                     <label className="pp-modal-label">Your research background *</label>
                     <textarea
                       className="pp-modal-input pp-modal-ta"
-                      placeholder="Briefly describe your relevant experience, projects, and skills..."
+                      placeholder="Briefly describe your experience, projects, and skills..."
                       value={applyForm.background}
                       onChange={e => setApplyForm({ ...applyForm, background: e.target.value })}
                       required rows={3}
                     />
                   </div>
 
-                  <div className="pp-modal-field">
-                    <label className="pp-modal-label">Proposed research topic or area</label>
-                    <input
-                      className="pp-modal-input"
-                      placeholder="e.g. Explainable AI for dermatology diagnosis"
-                      value={applyForm.topic}
-                      onChange={e => setApplyForm({ ...applyForm, topic: e.target.value })}
-                    />
-                  </div>
+                  {isSupervisor && (
+                    <>
+                      <div className="pp-modal-field">
+                        <label className="pp-modal-label">Proposed research topic</label>
+                        <input
+                          className="pp-modal-input"
+                          placeholder="e.g. Explainable AI for dermatology diagnosis"
+                          value={applyForm.topic}
+                          onChange={e => setApplyForm({ ...applyForm, topic: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="pp-modal-field">
+                        <label className="pp-modal-label">Funding situation</label>
+                        <select
+                          className="pp-modal-input pp-modal-select"
+                          value={applyForm.funding}
+                          onChange={e => setApplyForm({ ...applyForm, funding: e.target.value })}
+                        >
+                          <option value="">Select your funding situation</option>
+                          <option value="self">Self-funded</option>
+                          <option value="partial">Seeking partial funding</option>
+                          <option value="full">Need full scholarship</option>
+                          <option value="open">Open to discussion</option>
+                        </select>
+                      </div>
+                    </>
+                  )}
 
                   <div className="pp-modal-field">
-                    <label className="pp-modal-label">Are you seeking funding?</label>
-                    <select
-                      className="pp-modal-input pp-modal-select"
-                      value={applyForm.funding}
-                      onChange={e => setApplyForm({ ...applyForm, funding: e.target.value })}
-                    >
-                      <option value="">Select funding situation</option>
-                      <option value="self">Self-funded</option>
-                      <option value="partial">Seeking partial funding</option>
-                      <option value="full">Need full scholarship</option>
-                      <option value="open">Open to discussion</option>
-                    </select>
-                  </div>
+                    <label className="pp-modal-label">
+                      Supporting Documents
+                      <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 400, marginLeft: 6 }}>
+                        — attach as many as relevant
+                      </span>
+                    </label>
 
-                  <div className="pp-modal-field">
-                    <label className="pp-modal-label">Attach CV (optional)</label>
-                    <div className="pp-modal-upload">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="17 8 12 3 7 8"/>
-                        <line x1="12" y1="3" x2="12" y2="15"/>
-                      </svg>
-                      <span>Drop CV here or click to upload</span>
-                      <span className="pp-modal-upload-hint">PDF, max 5MB</span>
+                    <div className="pp-modal-doc-row">
+                      <div className="pp-modal-doc-icon">📄</div>
+                      <div className="pp-modal-doc-info">
+                        <div className="pp-modal-doc-title">CV / Resume</div>
+                        <div className="pp-modal-doc-sub">Your academic or research CV</div>
+                      </div>
+                      <label className="pp-modal-doc-btn">
+                        Upload
+                        <input type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }}
+                          onChange={e => setApplyForm({ ...applyForm, cv: e.target.files[0]?.name || '' })}/>
+                      </label>
+                      {applyForm.cv && <div className="pp-modal-doc-done">✓</div>}
+                    </div>
+
+                    <div className="pp-modal-doc-row">
+                      <div className="pp-modal-doc-icon">🔬</div>
+                      <div className="pp-modal-doc-info">
+                        <div className="pp-modal-doc-title">Research Statement</div>
+                        <div className="pp-modal-doc-sub">Why you want to do this research</div>
+                      </div>
+                      <label className="pp-modal-doc-btn">
+                        Upload
+                        <input type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }}
+                          onChange={e => setApplyForm({ ...applyForm, statement: e.target.files[0]?.name || '' })}/>
+                      </label>
+                      {applyForm.statement && <div className="pp-modal-doc-done">✓</div>}
+                    </div>
+
+                    <div className="pp-modal-doc-row">
+                      <div className="pp-modal-doc-icon">🎓</div>
+                      <div className="pp-modal-doc-info">
+                        <div className="pp-modal-doc-title">Academic Transcript</div>
+                        <div className="pp-modal-doc-sub">Your grades and academic record</div>
+                      </div>
+                      <label className="pp-modal-doc-btn">
+                        Upload
+                        <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" style={{ display: 'none' }}
+                          onChange={e => setApplyForm({ ...applyForm, transcript: e.target.files[0]?.name || '' })}/>
+                      </label>
+                      {applyForm.transcript && <div className="pp-modal-doc-done">✓</div>}
+                    </div>
+
+                    <div className="pp-modal-doc-row">
+                      <div className="pp-modal-doc-icon">📝</div>
+                      <div className="pp-modal-doc-info">
+                        <div className="pp-modal-doc-title">Writing Sample / Past Paper</div>
+                        <div className="pp-modal-doc-sub">A paper or project you have written</div>
+                      </div>
+                      <label className="pp-modal-doc-btn">
+                        Upload
+                        <input type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }}
+                          onChange={e => setApplyForm({ ...applyForm, writing: e.target.files[0]?.name || '' })}/>
+                      </label>
+                      {applyForm.writing && <div className="pp-modal-doc-done">✓</div>}
+                    </div>
+
+                    <div className="pp-modal-doc-row">
+                      <div className="pp-modal-doc-icon">✉️</div>
+                      <div className="pp-modal-doc-info">
+                        <div className="pp-modal-doc-title">Reference Letter</div>
+                        <div className="pp-modal-doc-sub">From a previous supervisor or lecturer</div>
+                      </div>
+                      <label className="pp-modal-doc-btn">
+                        Upload
+                        <input type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }}
+                          onChange={e => setApplyForm({ ...applyForm, reference: e.target.files[0]?.name || '' })}/>
+                      </label>
+                      {applyForm.reference && <div className="pp-modal-doc-done">✓</div>}
+                    </div>
+
+                    <div className="pp-modal-doc-row">
+                      <div className="pp-modal-doc-icon">📎</div>
+                      <div className="pp-modal-doc-info">
+                        <div className="pp-modal-doc-title">Other Supporting Document</div>
+                        <div className="pp-modal-doc-sub">Portfolio, certificate, or anything else</div>
+                      </div>
+                      <label className="pp-modal-doc-btn">
+                        Upload
+                        <input type="file" accept=".pdf,.doc,.docx,.jpg,.png,.zip" style={{ display: 'none' }}
+                          onChange={e => setApplyForm({ ...applyForm, other: e.target.files[0]?.name || '' })}/>
+                      </label>
+                      {applyForm.other && <div className="pp-modal-doc-done">✓</div>}
+                    </div>
+
+                    <div className="pp-modal-doc-note">
+                      📌 All documents go directly to their ResearchConnect inbox — no email needed. Max 5MB per file. PDF preferred.
                     </div>
                   </div>
 
@@ -698,7 +992,7 @@ function ProfilePage() {
                       Cancel
                     </button>
                     <button type="submit" className="pp-modal-submit">
-                      Send Application →
+                      {isSupervisor ? 'Send Application →' : 'Send Request →'}
                     </button>
                   </div>
                 </form>
@@ -707,6 +1001,8 @@ function ProfilePage() {
           </div>
         </div>
       )}
+
+      <Footer />
     </div>
   );
 }

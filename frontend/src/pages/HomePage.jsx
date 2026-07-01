@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/HomePage.css';
-
+import Footer from '../components/Footer';
 function Logo() {
   return (
     <svg viewBox="0 0 48 48" width="32" height="32">
@@ -339,74 +339,13 @@ function HomePage() {
         </aside>
       </div>
 
-      {/* ── FOOTER ──────────────────────────────────────── */}
-      <footer className="hf-footer">
-        <div className="hf-footer-grid">
-          <div className="hf-footer-brand">
-            <div className="hf-footer-logo">
-              <Logo/>
-              <div className="hf-footer-logo-text">Resea<span>Rc</span></div>
-            </div>
-            <div className="hf-footer-desc">
-              The UK's smart research matching platform — connecting students with verified supervisors and funded opportunities across every academic field.
-            </div>
-            <div className="hf-footer-soc">
-              {[
-                'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z',
-                'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z',
-                'M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z',
-              ].map((path, i) => (
-                <div key={i} className="hf-footer-soc-btn">
-                  <svg viewBox="0 0 24 24" width="15" height="15" fill="rgba(255,255,255,0.5)">
-                    <path d={path}/>
-                  </svg>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="hf-footer-col">
-            <h4>Platform</h4>
-            {['Home Feed','Discover','Opportunities','Smart Matches','Connections','Events'].map(l => (
-              <a key={l} href="#">{l}</a>
-            ))}
-          </div>
-
-          <div className="hf-footer-col">
-            <h4>Resources</h4>
-            {['About Us','Blog','Docs','Community','Verify Authorship','Leaderboard'].map(l => (
-              <a key={l} href="#">{l}</a>
-            ))}
-          </div>
-
-          <div className="hf-footer-col">
-            <h4>Legal</h4>
-            {['Terms of Service','Privacy Policy','Cookie Policy','GDPR','Accessibility'].map(l => (
-              <a key={l} href="#">{l}</a>
-            ))}
-          </div>
-        </div>
-
-        <div className="hf-footer-bottom">
-          <div className="hf-footer-copy">© 2026 ResearchConnect Ltd. All rights reserved.</div>
-          <div className="hf-footer-badge">
-            <div className="hf-footer-badge-dot"/>
-            UK Research Platform — Russell Group Focused
-          </div>
-          <div className="hf-footer-links">
-            {['Terms','Privacy','Cookies','Contact'].map(l => (
-              <a key={l} href="#">{l}</a>
-            ))}
-          </div>
-        </div>
-      </footer>
-
       {/* CHATBOT */}
       <div className="hf-chatbot">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d1b2e" strokeWidth="2.5">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
       </div>
+      <Footer />
     </div>
   );
 }
