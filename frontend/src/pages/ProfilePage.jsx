@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/ProfilePage.css';
 import Footer from '../components/Footer';
+import CreatePostModal from "../components/CreatePostModal";
 
 function Logo() {
   return (
@@ -223,6 +224,7 @@ function ProfilePage() {
   const isStudent = PROFILE.role === 'student';
   const isSupervisor = PROFILE.role === 'supervisor';
 
+  const [showPostModal, setShowPostModal] = useState(false);
   const [liked, setLiked] = useState(false);
   const [interested, setInterested] = useState(false);
   const [likeCount, setLikeCount] = useState(24);
@@ -264,8 +266,7 @@ function ProfilePage() {
         <div className="pp-nav-right">
           <div className="pp-nav-link" onClick={() => navigate('/home')}>Home</div>
           <div className="pp-nav-link">Opportunities</div>
-          <div className="pp-nav-link">Connections</div>
-          <button className="pp-new-btn">+ New Post</button>
+          <button className="pp-new-btn" onClick={() => setShowPostModal(true)}>+ New Post</button>
           <div className="pp-avatar-nav">M</div>
         </div>
       </nav>
@@ -1001,6 +1002,7 @@ function ProfilePage() {
           </div>
         </div>
       )}
+      {showPostModal && <CreatePostModal onClose={() => setShowPostModal(false)} userRole="student" />}
 
       <Footer />
     </div>

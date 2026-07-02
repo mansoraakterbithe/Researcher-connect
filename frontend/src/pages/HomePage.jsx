@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/HomePage.css';
 import Footer from '../components/Footer';
+import CreatePostModal from "../components/CreatePostModal";
 function Logo() {
   return (
     <svg viewBox="0 0 48 48" width="32" height="32">
@@ -108,6 +109,7 @@ const SUGGESTED = [
 function HomePage() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('All');
+  const [showPostModal, setShowPostModal] = useState(false);
 
   return (
     <div className="hf">
@@ -132,7 +134,7 @@ function HomePage() {
           <div className="hf-nav-link">Opportunities</div>
           <div className="hf-nav-link">Connections</div>
           <div className="hf-nav-link">Events</div>
-          <button className="hf-new-btn">
+          <button className="hf-new-btn" onClick={() => setShowPostModal(true)}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
@@ -345,9 +347,9 @@ function HomePage() {
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
       </div>
+      {showPostModal && <CreatePostModal onClose={() => setShowPostModal(false)} userRole="student" />}
       <Footer />
     </div>
   );
 }
-
 export default HomePage;
