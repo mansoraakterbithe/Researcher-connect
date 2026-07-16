@@ -110,6 +110,7 @@ function HomePage() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('All');
   const [showPostModal, setShowPostModal] = useState(false);
+  const [showAvatarMenu, setShowAvatarMenu] = useState(false);
 
   return (
     <div className="hf">
@@ -133,6 +134,7 @@ function HomePage() {
           <div className="hf-nav-link active">Home</div>
           <div className="hf-nav-link">Opportunities</div>
           <div className="hf-nav-link">Connections</div>
+          <div className="hf-nav-link" onClick={() => navigate('/notifications')}>🔔 Notifications</div>
           <div className="hf-nav-link">Events</div>
           <button className="hf-new-btn" onClick={() => setShowPostModal(true)}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -141,7 +143,7 @@ function HomePage() {
             </svg>
             New Post
           </button>
-          <div className="hf-avatar" onClick={() => navigate('/profile')}>M</div>
+          <div className="hf-avatar-wrap"><div className="hf-avatar" onClick={() => setShowAvatarMenu(!showAvatarMenu)}>M</div>{showAvatarMenu && (<div className="hf-avatar-menu"><div className="hf-avatar-menu-item" onClick={() => navigate('/profile')}>👤 View Profile</div><div className="hf-avatar-menu-item" onClick={() => navigate('/profile/edit')}>✏️ Edit Profile</div><div className="hf-avatar-menu-item" onClick={() => navigate('/settings')}>⚙️ Settings</div><div className="hf-avatar-menu-divider"/><div className="hf-avatar-menu-item logout" onClick={() => navigate('/auth')}>🚪 Logout</div></div>)}</div>
         </div>
       </nav>
 

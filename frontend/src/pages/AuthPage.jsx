@@ -115,8 +115,8 @@ function AuthPage() {
     try {
       const endpoint =
         mode === "signup"
-          ? "http://localhost:5000/api/auth/signup"
-          : "http://localhost:5000/api/auth/login";
+          ? "http://localhost:5001/api/auth/signup"
+          : "http://localhost:5001/api/auth/login";
 
       const body =
         mode === "signup"

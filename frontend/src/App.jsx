@@ -4,6 +4,7 @@ import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage';
 import EditProfilePage from './pages/EditProfilePage';
+import NotificationsPage from './pages/NotificationsPage';
 
 // Inside <Routes>:
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/:id" element={<ProfilePage />} />
         <Route path="/profile/edit" element={<EditProfilePage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
       </Routes>
     </BrowserRouter>
   );
