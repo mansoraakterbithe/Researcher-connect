@@ -19,6 +19,13 @@ app.use('/api/applications', require('./routes/applications'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/connections', require('./routes/connections'));
 app.use('/api/messages', require('./routes/messages'));
+app.use('/api/endorsements', require('./routes/endorsements'));
+
+// Ghosting Protection — runs every day at midnight
+const cron = require('node-cron');
+const { runGhostingProtection } = require('./utils/ghostingProtection');
+cron.schedule('0 0 * * *', runGhostingProtection);
+console.log('Ghosting Protection scheduler started');
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
