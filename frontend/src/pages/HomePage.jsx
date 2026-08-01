@@ -173,7 +173,7 @@ function HomePage() {
             { icon: 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4M12 16h.01', label: 'Need Help' },
             { icon: 'M2 3h20v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3zM8 21h8M12 17v4', label: 'Opportunity' },
           ].map(item => (
-            <div key={item.label} className="hf-side-item">
+            <div key={item.label} className="hf-side-item" onClick={() => item.path && navigate(item.path)}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d={item.icon}/>
               </svg>
@@ -184,11 +184,11 @@ function HomePage() {
           <div className="hf-divider"/>
           <div className="hf-side-label">My Activity</div>
           {[
-            { icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', label: 'My Profile' },
-            { icon: 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z', label: 'Saved' },
-            { icon: 'M22 12h-4l-3 9L9 3l-3 9H2', label: 'My Matches' },
+            { icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', label: 'My Profile', path: '/profile' },
+            { icon: 'M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z', label: 'Saved', path: '/saved' },
+            { icon: 'M22 12h-4l-3 9L9 3l-3 9H2', label: 'My Matches', path: '/matches' },
           ].map(item => (
-            <div key={item.label} className="hf-side-item">
+            <div key={item.label} className="hf-side-item" onClick={() => item.path && navigate(item.path)}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d={item.icon}/>
               </svg>

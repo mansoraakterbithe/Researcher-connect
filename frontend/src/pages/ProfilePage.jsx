@@ -217,7 +217,8 @@ const SUPERVISOR_PROFILE = {
 // ── CURRENT PROFILE — switch between student/supervisor here ──
 // Later this will come from your backend based on logged-in user
 // To test supervisor view: const PROFILE = STUDENT_PROFILE;
-const PROFILE = SUPERVISOR_PROFILE;
+//const PROFILE = SUPERVISOR_PROFILE;
+const PROFILE = STUDENT_PROFILE;
 
 function ProfilePage() {
   const navigate = useNavigate();
@@ -396,7 +397,7 @@ function ProfilePage() {
 
           {/* STATS ROW */}
           <div className="pp-stats-row">
-            {isStudent ? [
+            {(isStudent ? [
               { num: PROFILE.papersCount.toString(), label: 'Papers', color: '' },
               { num: `${PROFILE.matchScore}%`, label: 'Match Score', color: 'gold' },
               { num: PROFILE.followers.toString(), label: 'Followers', color: '' },
@@ -410,7 +411,7 @@ function ProfilePage() {
               { num: PROFILE.supervisedStudents.length.toString(), label: 'Students Supervised', color: '' },
               { num: PROFILE.impactScore.toString(), label: 'Impact Score', color: 'green' },
               { num: PROFILE.endorsementsCount.toString(), label: 'Endorsements', color: '' },
-            ].map(s => (
+            ]).map(s => (
               <div key={s.label} className="pp-stat">
                 <div className={`pp-stat-num ${s.color}`}>{s.num}</div>
                 <div className="pp-stat-label">{s.label}</div>
