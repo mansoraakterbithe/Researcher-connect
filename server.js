@@ -21,6 +21,8 @@ app.use('/api/connections', require('./routes/connections'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/endorsements', require('./routes/endorsements'));
 app.use('/api/match', require('./routes/match'));
+app.use('/api/search', require('./routes/search'));
+app.use('/api/karma', require('./routes/karma'));
 
 // Ghosting Protection — runs every day at midnight
 const cron = require('node-cron');
