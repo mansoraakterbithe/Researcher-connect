@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './styles/ProfilePage.css';
 import Footer from '../components/Footer';
 import CreatePostModal from "../components/CreatePostModal";
+import { useAuth } from '../context/AuthContext';
+
 function Logo() {
   return (
     <svg viewBox="0 0 48 48" width="32" height="32">
@@ -25,7 +27,6 @@ function Logo() {
   );
 }
 
-// ── STUDENT PROFILE DATA ──────────────────────────────────────
 const STUDENT_PROFILE = {
   name: 'Mansora Akter Bithe',
   initials: 'M',
@@ -96,11 +97,11 @@ const STUDENT_PROFILE = {
     {
       year: '2024', color: '#5BA4E6',
       title: 'SAM Segmentation on ISIC 2018',
-      desc: 'Zero-shot segmentation using Meta\'s Segment Anything Model. Mean IoU 0.744 vs Otsu baseline 0.570.',
+      desc: "Zero-shot segmentation using Meta's Segment Anything Model. Mean IoU 0.744 vs Otsu baseline 0.570.",
       tag: 'ML Project', tagColor: 'blue',
       popup: {
         title: 'SAM: Zero-Shot Skin Lesion Segmentation',
-        body: 'Applied Meta\'s Segment Anything Model (SAM) to ISIC 2018 dataset without fine-tuning. Mean IoU 0.744 vs Otsu 0.570 — 30% improvement over baseline.',
+        body: "Applied Meta's Segment Anything Model (SAM) to ISIC 2018 dataset without fine-tuning. Mean IoU 0.744 vs Otsu 0.570 — 30% improvement over baseline.",
         stats: [{ val: '0.744', label: 'Mean IoU' }, { val: '0.570', label: 'Baseline' }, { val: '+30%', label: 'Improvement' }],
       },
     },
@@ -129,7 +130,6 @@ const STUDENT_PROFILE = {
   ],
 };
 
-// ── SUPERVISOR PROFILE DATA ───────────────────────────────────
 const SUPERVISOR_PROFILE = {
   name: 'Dr. Sarah Chen',
   initials: 'Dr',
@@ -214,14 +214,50 @@ const SUPERVISOR_PROFILE = {
   ],
 };
 
-// ── CURRENT PROFILE — switch between student/supervisor here ──
-// Later this will come from your backend based on logged-in user
-// To test supervisor view: const PROFILE = STUDENT_PROFILE;
-//const PROFILE = SUPERVISOR_PROFILE;
-const PROFILE = STUDENT_PROFILE;
-
 function ProfilePage() {
   const navigate = useNavigate();
+  const { authFetch } = useAuth();
+  const [profileData, setProfileData] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await authFetch('/profile/me');
+        const data = await res.json();
+        setProfileData(data.profile);
+      } catch (err) {
+        console.error('Profile fetch error:', err);
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const PROFILE = profileData ? {
+    ...(profileData.role === 'supervisor' ? SUPERVISOR_PROFILE : STUDENT_PROFILE),
+    name: profileData.username,
+    initials: profileData.username?.charAt(0).toUpperCase() || 'M',
+    role: profileData.role,
+    verified: profileData.isVerified,
+    university: profileData.university || STUDENT_PROFILE.university,
+    department: profileData.department || STUDENT_PROFILE.department,
+    location: profileData.location || STUDENT_PROFILE.location,
+    remote: profileData.remote,
+    impactScore: profileData.impactScore || STUDENT_PROFILE.impactScore,
+    followers: profileData.followers?.length || STUDENT_PROFILE.followers,
+    following: profileData.following?.length || STUDENT_PROFILE.following,
+    status: profileData.status,
+    seekingSupervisor: profileData.seekingSupervisor,
+    targetDegree: profileData.targetDegree || STUDENT_PROFILE.targetDegree,
+    fundingNeeded: profileData.fundingNeeded || STUDENT_PROFILE.fundingNeeded,
+    about: profileData.bio || STUDENT_PROFILE.about,
+    skills: profileData.skills?.length > 0
+      ? profileData.skills.map(s => ({ name: s, endorsed: false }))
+      : STUDENT_PROFILE.skills,
+  } : STUDENT_PROFILE;
+
   const isStudent = PROFILE.role === 'student';
   const isSupervisor = PROFILE.role === 'supervisor';
 
@@ -232,9 +268,9 @@ function ProfilePage() {
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [applySubmitted, setApplySubmitted] = useState(false);
   const [applyForm, setApplyForm] = useState({
-  why: '', background: '', topic: '', funding: '',
-  cv: '', statement: '', transcript: '', writing: '', reference: '', other: '',
-});
+    why: '', background: '', topic: '', funding: '',
+    cv: '', statement: '', transcript: '', writing: '', reference: '', other: '',
+  });
   const [activeTab, setActiveTab] = useState('about');
 
   function handleLike() {
@@ -247,13 +283,19 @@ function ProfilePage() {
     setApplySubmitted(true);
   }
 
+  if (loadingProfile) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#0a0800', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.4)', fontFamily: 'Inter, sans-serif' }}>
+        Loading profile...
+      </div>
+    );
+  }
+
   return (
     <div className="pp">
 
-      {/* ── NAVBAR ──────────────────────────────────────── */}
       <Navbar activePage="profile" />
 
-      {/* ── COVER ───────────────────────────────────────── */}
       <div className={`pp-cover ${isSupervisor ? 'supervisor' : ''}`}>
         <div className="pp-cover-orb1"/>
         <div className="pp-cover-orb2"/>
@@ -263,7 +305,6 @@ function ProfilePage() {
         </button>
       </div>
 
-      {/* ── PROFILE HEADER ──────────────────────────────── */}
       <div className="pp-header-wrap">
         <div className="pp-header-inner">
 
@@ -283,13 +324,11 @@ function ProfilePage() {
               </div>
 
               <div className="pp-action-row">
-                {/* STUDENT sees: Request Collaboration */}
                 {isStudent && (
                   <button className="pp-btn-primary" onClick={() => setShowApplyModal(true)}>
                     🤝 Request Collaboration
                   </button>
                 )}
-                {/* SUPERVISOR sees: Apply to Work With */}
                 {isSupervisor && (
                   <button className="pp-btn-primary pp-btn-apply" onClick={() => setShowApplyModal(true)}>
                     🎓 Apply to Work With
@@ -310,7 +349,6 @@ function ProfilePage() {
             </div>
           </div>
 
-          {/* NAME + BADGES */}
           <div className="pp-name-section">
             <div className="pp-name">
               {PROFILE.name}
@@ -329,7 +367,6 @@ function ProfilePage() {
             </div>
           </div>
 
-          {/* OPEN TO CHIPS */}
           <div className="pp-open-row">
             <span className="pp-open-label">Open to:</span>
             {PROFILE.openTo.map(item => (
@@ -339,7 +376,6 @@ function ProfilePage() {
             ))}
           </div>
 
-          {/* STUDENT ONLY — Seeking Supervisor Banner */}
           {isStudent && PROFILE.seekingSupervisor && (
             <div className="pp-seeking-banner">
               <div className="pp-seeking-dot"/>
@@ -355,7 +391,6 @@ function ProfilePage() {
             </div>
           )}
 
-          {/* SUPERVISOR ONLY — Quick Availability Banner */}
           {isSupervisor && (
             <div className="pp-avail-banner">
               <div className={`pp-avail-banner-dot ${PROFILE.availability.status}`}/>
@@ -376,7 +411,6 @@ function ProfilePage() {
             </div>
           )}
 
-          {/* STATS ROW */}
           <div className="pp-stats-row">
             {(isStudent ? [
               { num: PROFILE.papersCount.toString(), label: 'Papers', color: '' },
@@ -400,7 +434,6 @@ function ProfilePage() {
             ))}
           </div>
 
-          {/* REACTIONS */}
           <div className="pp-reactions">
             <button className={`pp-react-btn like ${liked ? 'active' : ''}`} onClick={handleLike}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
@@ -432,7 +465,6 @@ function ProfilePage() {
             </button>
           </div>
 
-          {/* TABS */}
           <div className="pp-tabs">
             {['about', 'papers', 'projects', 'connections'].map(tab => (
               <div
@@ -447,20 +479,16 @@ function ProfilePage() {
         </div>
       </div>
 
-      {/* ── MAIN BODY ────────────────────────────────────── */}
       <div className="pp-body">
         <div className="pp-main">
 
-          {/* ABOUT TAB */}
           {activeTab === 'about' && (
             <>
-              {/* ABOUT */}
               <div className="pp-card">
                 <div className="pp-card-head">About <span className="pp-card-edit">✏️ Edit</span></div>
                 <p className="pp-about-text">{PROFILE.about}</p>
               </div>
 
-              {/* SUPERVISOR ONLY — Research Areas */}
               {isSupervisor && (
                 <div className="pp-card">
                   <div className="pp-card-head">Research Areas</div>
@@ -472,7 +500,6 @@ function ProfilePage() {
                 </div>
               )}
 
-              {/* IMPACT SCORE */}
               <div className="pp-card">
                 <div className="pp-card-head">
                   Impact Score
@@ -508,7 +535,6 @@ function ProfilePage() {
                 </div>
               </div>
 
-              {/* RESEARCH DNA */}
               <div className="pp-card">
                 <div className="pp-card-head">
                   Research DNA
@@ -526,7 +552,6 @@ function ProfilePage() {
                 </div>
               </div>
 
-              {/* STUDENT ONLY — Skills */}
               {isStudent && (
                 <div className="pp-card">
                   <div className="pp-card-head">Skills & Tools <span className="pp-card-edit">✏️ Edit</span></div>
@@ -540,7 +565,6 @@ function ProfilePage() {
                 </div>
               )}
 
-              {/* STUDENT ONLY — Research Journey Timeline */}
               {isStudent && (
                 <div className="pp-card">
                   <div className="pp-card-head">Research Journey <span className="pp-card-edit">✏️ Edit</span></div>
@@ -579,7 +603,6 @@ function ProfilePage() {
                 </div>
               )}
 
-              {/* SUPERVISOR ONLY — Recent Papers with popup */}
               {isSupervisor && (
                 <div className="pp-card">
                   <div className="pp-card-head">Recent Publications</div>
@@ -611,7 +634,6 @@ function ProfilePage() {
                 </div>
               )}
 
-              {/* SUPERVISOR ONLY — Students Supervised */}
               {isSupervisor && (
                 <div className="pp-card">
                   <div className="pp-card-head">Students Supervised</div>
@@ -627,7 +649,6 @@ function ProfilePage() {
                 </div>
               )}
 
-              {/* STUDENT ONLY — Reading List */}
               {isStudent && (
                 <div className="pp-card">
                   <div className="pp-card-head">📚 Reading List <span className="pp-card-edit">✏️ Edit</span></div>
@@ -644,7 +665,6 @@ function ProfilePage() {
             </>
           )}
 
-          {/* PAPERS TAB */}
           {activeTab === 'papers' && (
             <div className="pp-card">
               <div className="pp-card-head">
@@ -653,16 +673,13 @@ function ProfilePage() {
               <div className="pp-empty-state">
                 <div className="pp-empty-icon">📄</div>
                 <div className="pp-empty-text">
-                  {isStudent
-                    ? 'Papers you publish will appear here'
-                    : 'Full publication list coming soon'}
+                  {isStudent ? 'Papers you publish will appear here' : 'Full publication list coming soon'}
                 </div>
                 <button className="pp-empty-btn">+ Add Paper</button>
               </div>
             </div>
           )}
 
-          {/* PROJECTS TAB */}
           {activeTab === 'projects' && (
             <div className="pp-card">
               <div className="pp-card-head">
@@ -671,9 +688,7 @@ function ProfilePage() {
               <div className="pp-empty-state">
                 <div className="pp-empty-icon">🔬</div>
                 <div className="pp-empty-text">
-                  {isStudent
-                    ? 'Projects you work on will appear here'
-                    : 'Active opportunities and projects appear here'}
+                  {isStudent ? 'Projects you work on will appear here' : 'Active opportunities and projects appear here'}
                 </div>
                 <button className="pp-empty-btn">
                   {isStudent ? '+ Add Project' : '+ Post Opportunity'}
@@ -682,7 +697,6 @@ function ProfilePage() {
             </div>
           )}
 
-          {/* CONNECTIONS TAB */}
           {activeTab === 'connections' && (
             <div className="pp-card">
               <div className="pp-card-head">Connections</div>
@@ -697,10 +711,8 @@ function ProfilePage() {
           )}
         </div>
 
-        {/* ── RIGHT SIDEBAR ────────────────────────────── */}
         <aside className="pp-right">
 
-          {/* SUPERVISOR ONLY — Full Availability Card */}
           {isSupervisor && (
             <div className="pp-avail-card">
               <div className="pp-avail-head">
@@ -710,7 +722,6 @@ function ProfilePage() {
                 </div>
                 <span className="pp-avail-badge">🔬 Verified Supervisor</span>
               </div>
-
               <div className="pp-avail-grid">
                 <div className="pp-avail-item">
                   <div className="pp-avail-label">PhD Supervision</div>
@@ -729,27 +740,22 @@ function ProfilePage() {
                   <div className="pp-avail-val">{PROFILE.availability.responseTime}</div>
                 </div>
               </div>
-
               <div className="pp-avail-scholarship">
                 <div className="pp-avail-label">💰 Scholarship</div>
                 <div className="pp-avail-scholarship-text">{PROFILE.availability.scholarshipSupport}</div>
               </div>
-
               <div className="pp-avail-req">
                 <div className="pp-avail-label">Requirements</div>
                 <div className="pp-avail-req-text">{PROFILE.availability.requirements}</div>
               </div>
-
               <div className="pp-avail-deadline">📅 {PROFILE.availability.deadline}</div>
               <div className="pp-avail-deadline">🗓 Start: {PROFILE.availability.startDate}</div>
-
               <button className="pp-apply-btn" onClick={() => setShowApplyModal(true)}>
                 🎓 Apply to Work With This Supervisor
               </button>
             </div>
           )}
 
-          {/* STUDENT ONLY — Collaboration Request Box */}
           {isStudent && (
             <div className="pp-collab-card">
               <div className="pp-collab-title">🤝 Request Collaboration</div>
@@ -763,7 +769,6 @@ function ProfilePage() {
             </div>
           )}
 
-          {/* ENDORSEMENTS — both roles */}
           <div className="pp-card">
             <div className="pp-card-head">Skill Endorsements</div>
             {PROFILE.endorsementList.map(e => (
@@ -780,7 +785,6 @@ function ProfilePage() {
         </aside>
       </div>
 
-      {/* ── APPLY MODAL ──────────────────────────────────── */}
       {showApplyModal && (
         <div className="pp-modal-overlay" onClick={() => setShowApplyModal(false)}>
           <div className="pp-modal" onClick={e => e.stopPropagation()}>
@@ -792,8 +796,8 @@ function ProfilePage() {
                 </div>
                 <div className="pp-modal-success-sub">
                   {isSupervisor
-                    ? 'Your application has been sent directly to their ResearchConnect inbox. You\'ll receive a notification when they respond — usually within 3-5 days.'
-                    : 'Your collaboration request has been sent. You\'ll be notified when they respond.'}
+                    ? "Your application has been sent directly to their ResearchConnect inbox. You'll receive a notification when they respond — usually within 3-5 days."
+                    : "Your collaboration request has been sent. You'll be notified when they respond."}
                 </div>
                 <button className="pp-modal-close-btn" onClick={() => { setShowApplyModal(false); setApplySubmitted(false); }}>
                   Done
@@ -818,15 +822,11 @@ function ProfilePage() {
                 <form className="pp-modal-form" onSubmit={handleApplySubmit}>
                   <div className="pp-modal-field">
                     <label className="pp-modal-label">
-                      {isSupervisor
-                        ? 'Why do you want to work with this supervisor? *'
-                        : 'What would you like to collaborate on? *'}
+                      {isSupervisor ? 'Why do you want to work with this supervisor? *' : 'What would you like to collaborate on? *'}
                     </label>
                     <textarea
                       className="pp-modal-input pp-modal-ta"
-                      placeholder={isSupervisor
-                        ? "Explain why their research aligns with yours..."
-                        : "Describe your project and how you'd like to collaborate..."}
+                      placeholder={isSupervisor ? "Explain why their research aligns with yours..." : "Describe your project and how you'd like to collaborate..."}
                       value={applyForm.why}
                       onChange={e => setApplyForm({ ...applyForm, why: e.target.value })}
                       required rows={3}
@@ -855,7 +855,6 @@ function ProfilePage() {
                           onChange={e => setApplyForm({ ...applyForm, topic: e.target.value })}
                         />
                       </div>
-
                       <div className="pp-modal-field">
                         <label className="pp-modal-label">Funding situation</label>
                         <select
@@ -876,94 +875,31 @@ function ProfilePage() {
                   <div className="pp-modal-field">
                     <label className="pp-modal-label">
                       Supporting Documents
-                      <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 400, marginLeft: 6 }}>
-                        — attach as many as relevant
-                      </span>
+                      <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 400, marginLeft: 6 }}>— attach as many as relevant</span>
                     </label>
 
-                    <div className="pp-modal-doc-row">
-                      <div className="pp-modal-doc-icon">📄</div>
-                      <div className="pp-modal-doc-info">
-                        <div className="pp-modal-doc-title">CV / Resume</div>
-                        <div className="pp-modal-doc-sub">Your academic or research CV</div>
+                    {[
+                      { icon: '📄', title: 'CV / Resume', sub: 'Your academic or research CV', key: 'cv', accept: '.pdf,.doc,.docx' },
+                      { icon: '🔬', title: 'Research Statement', sub: 'Why you want to do this research', key: 'statement', accept: '.pdf,.doc,.docx' },
+                      { icon: '🎓', title: 'Academic Transcript', sub: 'Your grades and academic record', key: 'transcript', accept: '.pdf,.doc,.docx,.jpg,.png' },
+                      { icon: '📝', title: 'Writing Sample / Past Paper', sub: 'A paper or project you have written', key: 'writing', accept: '.pdf,.doc,.docx' },
+                      { icon: '✉️', title: 'Reference Letter', sub: 'From a previous supervisor or lecturer', key: 'reference', accept: '.pdf,.doc,.docx' },
+                      { icon: '📎', title: 'Other Supporting Document', sub: 'Portfolio, certificate, or anything else', key: 'other', accept: '.pdf,.doc,.docx,.jpg,.png,.zip' },
+                    ].map(doc => (
+                      <div key={doc.key} className="pp-modal-doc-row">
+                        <div className="pp-modal-doc-icon">{doc.icon}</div>
+                        <div className="pp-modal-doc-info">
+                          <div className="pp-modal-doc-title">{doc.title}</div>
+                          <div className="pp-modal-doc-sub">{doc.sub}</div>
+                        </div>
+                        <label className="pp-modal-doc-btn">
+                          Upload
+                          <input type="file" accept={doc.accept} style={{ display: 'none' }}
+                            onChange={e => setApplyForm({ ...applyForm, [doc.key]: e.target.files[0]?.name || '' })}/>
+                        </label>
+                        {applyForm[doc.key] && <div className="pp-modal-doc-done">✓</div>}
                       </div>
-                      <label className="pp-modal-doc-btn">
-                        Upload
-                        <input type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }}
-                          onChange={e => setApplyForm({ ...applyForm, cv: e.target.files[0]?.name || '' })}/>
-                      </label>
-                      {applyForm.cv && <div className="pp-modal-doc-done">✓</div>}
-                    </div>
-
-                    <div className="pp-modal-doc-row">
-                      <div className="pp-modal-doc-icon">🔬</div>
-                      <div className="pp-modal-doc-info">
-                        <div className="pp-modal-doc-title">Research Statement</div>
-                        <div className="pp-modal-doc-sub">Why you want to do this research</div>
-                      </div>
-                      <label className="pp-modal-doc-btn">
-                        Upload
-                        <input type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }}
-                          onChange={e => setApplyForm({ ...applyForm, statement: e.target.files[0]?.name || '' })}/>
-                      </label>
-                      {applyForm.statement && <div className="pp-modal-doc-done">✓</div>}
-                    </div>
-
-                    <div className="pp-modal-doc-row">
-                      <div className="pp-modal-doc-icon">🎓</div>
-                      <div className="pp-modal-doc-info">
-                        <div className="pp-modal-doc-title">Academic Transcript</div>
-                        <div className="pp-modal-doc-sub">Your grades and academic record</div>
-                      </div>
-                      <label className="pp-modal-doc-btn">
-                        Upload
-                        <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" style={{ display: 'none' }}
-                          onChange={e => setApplyForm({ ...applyForm, transcript: e.target.files[0]?.name || '' })}/>
-                      </label>
-                      {applyForm.transcript && <div className="pp-modal-doc-done">✓</div>}
-                    </div>
-
-                    <div className="pp-modal-doc-row">
-                      <div className="pp-modal-doc-icon">📝</div>
-                      <div className="pp-modal-doc-info">
-                        <div className="pp-modal-doc-title">Writing Sample / Past Paper</div>
-                        <div className="pp-modal-doc-sub">A paper or project you have written</div>
-                      </div>
-                      <label className="pp-modal-doc-btn">
-                        Upload
-                        <input type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }}
-                          onChange={e => setApplyForm({ ...applyForm, writing: e.target.files[0]?.name || '' })}/>
-                      </label>
-                      {applyForm.writing && <div className="pp-modal-doc-done">✓</div>}
-                    </div>
-
-                    <div className="pp-modal-doc-row">
-                      <div className="pp-modal-doc-icon">✉️</div>
-                      <div className="pp-modal-doc-info">
-                        <div className="pp-modal-doc-title">Reference Letter</div>
-                        <div className="pp-modal-doc-sub">From a previous supervisor or lecturer</div>
-                      </div>
-                      <label className="pp-modal-doc-btn">
-                        Upload
-                        <input type="file" accept=".pdf,.doc,.docx" style={{ display: 'none' }}
-                          onChange={e => setApplyForm({ ...applyForm, reference: e.target.files[0]?.name || '' })}/>
-                      </label>
-                      {applyForm.reference && <div className="pp-modal-doc-done">✓</div>}
-                    </div>
-
-                    <div className="pp-modal-doc-row">
-                      <div className="pp-modal-doc-icon">📎</div>
-                      <div className="pp-modal-doc-info">
-                        <div className="pp-modal-doc-title">Other Supporting Document</div>
-                        <div className="pp-modal-doc-sub">Portfolio, certificate, or anything else</div>
-                      </div>
-                      <label className="pp-modal-doc-btn">
-                        Upload
-                        <input type="file" accept=".pdf,.doc,.docx,.jpg,.png,.zip" style={{ display: 'none' }}
-                          onChange={e => setApplyForm({ ...applyForm, other: e.target.files[0]?.name || '' })}/>
-                      </label>
-                      {applyForm.other && <div className="pp-modal-doc-done">✓</div>}
-                    </div>
+                    ))}
 
                     <div className="pp-modal-doc-note">
                       📌 All documents go directly to their ResearchConnect inbox — no email needed. Max 5MB per file. PDF preferred.
@@ -971,9 +907,7 @@ function ProfilePage() {
                   </div>
 
                   <div className="pp-modal-footer">
-                    <button type="button" className="pp-modal-cancel" onClick={() => setShowApplyModal(false)}>
-                      Cancel
-                    </button>
+                    <button type="button" className="pp-modal-cancel" onClick={() => setShowApplyModal(false)}>Cancel</button>
                     <button type="submit" className="pp-modal-submit">
                       {isSupervisor ? 'Send Application →' : 'Send Request →'}
                     </button>
@@ -984,8 +918,8 @@ function ProfilePage() {
           </div>
         </div>
       )}
-      {showPostModal && <CreatePostModal onClose={() => setShowPostModal(false)} userRole="student" />}
 
+      {showPostModal && <CreatePostModal onClose={() => setShowPostModal(false)} userRole="student" />}
       <Footer />
     </div>
   );
