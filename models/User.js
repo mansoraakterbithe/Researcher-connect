@@ -1,10 +1,3 @@
-// ============================================================
-// FILE: models/User.js
-// This defines what a User looks like in MongoDB.
-// Think of it as a form with specific fields.
-// Every user in the database must match this shape.
-// ============================================================
-
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
@@ -12,24 +5,22 @@ const userSchema = new mongoose.Schema(
     // ── BASIC INFO ─────────────────────────────────────────
     username: {
       type: String,
-      required: true,   // cannot be empty
-      unique: true,     // no two users can have the same username
-      trim: true        // removes spaces from start and end
+      required: true,
+      unique: true,
+      trim: true
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      lowercase: true   // always saves as lowercase so "Test@gmail.com" == "test@gmail.com"
+      lowercase: true
     },
     password: {
       type: String,
       required: true
-      // NEVER stored as plain text — always hashed with bcrypt
     },
 
     // ── ROLE ───────────────────────────────────────────────
-    // enum means: only these exact values are allowed
     role: {
       type: String,
       enum: ['student', 'supervisor', 'researcher'],
@@ -41,15 +32,14 @@ const userSchema = new mongoose.Schema(
     university: { type: String, default: '' },
     department: { type: String, default: '' },
     location: { type: String, default: '' },
-    profilePhoto: { type: String, default: '' },   // URL to photo
-    coverPhoto: { type: String, default: '' },     // URL to cover
+    profilePhoto: { type: String, default: '' },
+    coverPhoto: { type: String, default: '' },
 
     // ── RESEARCH INFO ──────────────────────────────────────
     skills: { type: [String], default: [] },
     researchInterests: { type: [String], default: [] },
 
     // ── STATUS ─────────────────────────────────────────────
-    // active = actively looking, passive = open, closed = not available
     status: {
       type: String,
       enum: ['active', 'passive', 'closed'],
@@ -58,7 +48,6 @@ const userSchema = new mongoose.Schema(
     remote: { type: Boolean, default: true },
 
     // ── OPEN TO ────────────────────────────────────────────
-    // What kinds of opportunities is this person open to?
     openTo: {
       collaboration: { type: Boolean, default: true },
       coauthorship: { type: Boolean, default: true },
@@ -108,42 +97,23 @@ const userSchema = new mongoose.Schema(
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 
     // ── UNIQUE FEATURES ────────────────────────────────────
-    // Feature W5: Research Karma System
     karmaScore: { type: Number, default: 0 },
-
-    // Feature W1: Cold Email Killer — track response rate
-    // How many applications has this supervisor responded to?
     applicationsReceived: { type: Number, default: 0 },
     applicationsResponded: { type: Number, default: 0 },
-    // Calculated field: applicationsResponded / applicationsReceived * 100
     responseRate: { type: Number, default: 100 },
-
-    // Feature W4: Imposter Syndrome Score
     impactScore: { type: Number, default: 0 },
-
-    // Feature M1: Match Score cache
-    // Stores pre-calculated match scores with other users
-    // so we don't recalculate every time
     matchScoreCache: { type: Map, of: Number, default: {} },
 
     // ── ACCOUNT ────────────────────────────────────────────
     isVerified: { type: Boolean, default: false },
-    // Supervisors are verified when we confirm their .ac.uk email
-    verifiedAt: { type: Date }
+    verifiedAt: { type: Date },
+    isAdmin: { type: Boolean, default: false },
+    resetPasswordToken: { type: String },
+    resetPasswordExpire: { type: Date }
   },
   {
-    // timestamps: true automatically adds createdAt and updatedAt fields
-    // 🍰 Real life: like a timestamp on a receipt — when was this created?
     timestamps: true
   }
 );
-
-// ── VIRTUAL FIELD ─────────────────────────────────────────
-// A virtual field is calculated on the fly — not stored in database
-// 🍰 Real life: your age is calculated from your birthday — not stored separately
-userSchema.virtual('papersCount').get(function() {
-  // This will be populated from the Post model later
-  return 0;
-});
 
 module.exports = mongoose.model('User', userSchema);
