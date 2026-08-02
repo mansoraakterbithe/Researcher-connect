@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './styles/ProfilePage.css';
 import Footer from '../components/Footer';
 import CreatePostModal from "../components/CreatePostModal";
-
 function Logo() {
   return (
     <svg viewBox="0 0 48 48" width="32" height="32">
@@ -251,26 +251,7 @@ function ProfilePage() {
     <div className="pp">
 
       {/* ── NAVBAR ──────────────────────────────────────── */}
-      <nav className="pp-nav">
-        <div className="pp-nav-left">
-          <div className="pp-logo-wrap" onClick={() => navigate('/')}>
-            <Logo/>
-            <span className="pp-logo-text">Resea<span>Rc</span></span>
-          </div>
-          <div className="pp-search">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input placeholder="Search people, papers, topics..."/>
-          </div>
-        </div>
-        <div className="pp-nav-right">
-          <div className="pp-nav-link" onClick={() => navigate('/home')}>Home</div>
-          <div className="pp-nav-link">Opportunities</div>
-          <button className="pp-new-btn" onClick={() => setShowPostModal(true)}>+ New Post</button>
-          <div className="pp-avatar-nav">M</div>
-        </div>
-      </nav>
+      <Navbar activePage="profile" />
 
       {/* ── COVER ───────────────────────────────────────── */}
       <div className={`pp-cover ${isSupervisor ? 'supervisor' : ''}`}>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './styles/HomePage.css';
 import Footer from '../components/Footer';
 import CreatePostModal from "../components/CreatePostModal";
+import { useAuth } from '../context/AuthContext';
 function Logo() {
   return (
     <svg viewBox="0 0 48 48" width="32" height="32">
@@ -111,6 +112,7 @@ function HomePage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [showPostModal, setShowPostModal] = useState(false);
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
+  const { logout } = useAuth();
 
   return (
     <div className="hf">
@@ -143,7 +145,7 @@ function HomePage() {
             </svg>
             New Post
           </button>
-          <div className="hf-avatar-wrap"><div className="hf-avatar" onClick={() => setShowAvatarMenu(!showAvatarMenu)}>M</div>{showAvatarMenu && (<div className="hf-avatar-menu"><div className="hf-avatar-menu-item" onClick={() => navigate('/profile')}>👤 View Profile</div><div className="hf-avatar-menu-item" onClick={() => navigate('/profile/edit')}>✏️ Edit Profile</div><div className="hf-avatar-menu-item" onClick={() => navigate('/settings')}>⚙️ Settings</div><div className="hf-avatar-menu-divider"/><div className="hf-avatar-menu-item logout" onClick={() => navigate('/auth')}>🚪 Logout</div></div>)}</div>
+          <div className="hf-avatar-wrap"><div className="hf-avatar" onClick={() => setShowAvatarMenu(!showAvatarMenu)}>M</div>{showAvatarMenu && (<div className="hf-avatar-menu"><div className="hf-avatar-menu-item" onClick={() => { navigate("/profile"); setShowAvatarMenu(false); }}>👤 View Profile</div><div className="hf-avatar-menu-item" onClick={() => { navigate("/profile/edit"); setShowAvatarMenu(false); }}>✏️ Edit Profile</div><div className="hf-avatar-menu-item" onClick={() => { navigate("/settings"); setShowAvatarMenu(false); }}>⚙️ Settings</div><div className="hf-avatar-menu-divider"/><div className="hf-avatar-menu-item logout" onClick={() => { logout(); navigate("/auth"); setShowAvatarMenu(false); }}>🚪 Logout</div></div>)}</div>
         </div>
       </nav>
 

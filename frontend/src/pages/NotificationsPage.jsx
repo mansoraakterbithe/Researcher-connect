@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './styles/NotificationsPage.css';
 import Footer from '../components/Footer';
 import CreatePostModal from '../components/CreatePostModal';
-
 function Logo() {
   return (
     <svg viewBox="0 0 48 48" width="32" height="32">
@@ -158,30 +158,7 @@ function NotificationsPage() {
     <div className="np">
 
       {/* ── NAVBAR ──────────────────────────────────────── */}
-      <nav className="np-nav">
-        <div className="np-nav-left">
-          <div className="np-logo" onClick={() => navigate('/')}>
-            <Logo/>
-            <span className="np-logo-text">Resea<span>Rc</span></span>
-          </div>
-          <div className="np-search">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input placeholder="Search notifications..."/>
-          </div>
-        </div>
-        <div className="np-nav-right">
-          <div className="np-nav-link" onClick={() => navigate('/home')}>Home</div>
-          <div className="np-nav-link" onClick={() => navigate('/connections')}>Connections</div>
-          <div className="np-nav-link np-nav-active">
-            Notifications
-            {unreadCount > 0 && <span className="np-nav-badge">{unreadCount}</span>}
-          </div>
-          <button className="np-new-btn" onClick={() => setShowPostModal(true)}>+ New Post</button>
-          <div className="np-avatar" onClick={() => navigate('/profile')}>M</div>
-        </div>
-      </nav>
+      <Navbar activePage="notifications" />
 
       <div className="np-body">
 

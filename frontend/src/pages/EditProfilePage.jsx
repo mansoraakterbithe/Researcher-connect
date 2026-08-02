@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import './styles/EditProfilePage.css';
 import Footer from '../components/Footer';
@@ -151,29 +152,7 @@ function EditProfilePage() {
     <div className="ep">
 
       {/* ── NAVBAR ──────────────────────────────────────── */}
-      <nav className="ep-nav">
-        <div className="ep-nav-left">
-          <div className="ep-logo" onClick={() => navigate('/')}>
-            <Logo/>
-            <span className="ep-logo-text">Resea<span>Rc</span></span>
-          </div>
-        </div>
-        <div className="ep-nav-center">
-          <span className="ep-nav-title">Edit Profile</span>
-        </div>
-        <div className="ep-nav-right">
-          <button className="ep-cancel-btn" onClick={() => navigate('/profile')}>
-            Cancel
-          </button>
-          <button
-            className={`ep-save-btn ${saving ? 'saving' : ''} ${saved ? 'saved' : ''}`}
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving ? '⏳ Saving...' : saved ? '✓ Saved!' : 'Save Changes'}
-          </button>
-        </div>
-      </nav>
+      <Navbar activePage="edit" />
 
       <div className="ep-body">
 
