@@ -20,7 +20,6 @@ const documentSchema = new mongoose.Schema({
   url: { type: String },        // where the file is stored
   uploadedAt: { type: Date, default: Date.now }
 });
-
 const applicationSchema = new mongoose.Schema(
   {
     // ── WHO IS APPLYING ───────────────────────────────────
