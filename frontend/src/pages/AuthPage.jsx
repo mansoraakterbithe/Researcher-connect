@@ -3,11 +3,9 @@
 // ============================================================
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import "./styles/AuthPage.css";
 
-// UK universities list for autocomplete
-// 🍰 EXAMPLE: stored outside the component so it's not
-// recreated every time the component re-renders
 const UK_UNIVERSITIES = [
   "University of Bristol",
   "University of Oxford",
@@ -33,83 +31,50 @@ const UK_UNIVERSITIES = [
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  // ── WHICH FORM ARE WE SHOWING ─────────────────────────────
   const [mode, setMode] = useState("signup");
-
-  // ── ROLE: student or supervisor ───────────────────────────
   const [role, setRole] = useState("student");
-  // 🍰 EXAMPLE: starts as 'student'. When user clicks the
-  // Supervisor card, setRole('supervisor') updates this,
-  // and the form immediately adjusts — hiding skills field,
-  // showing the .ac.uk note, changing email placeholder.
-
-  // ── SKILL TAGS ────────────────────────────────────────────
   const [skills, setSkills] = useState([]);
   const [skillInput, setSkillInput] = useState("");
-  // 🍰 EXAMPLE: skills is an array ["Python", "R", "SPSS"].
-  // skillInput is what's currently being typed.
-  // They're separate because one is committed (the tag exists)
-  // and one is in-progress (still being typed).
-
-  // ── FORM DATA ─────────────────────────────────────────────
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     university: "",
     password: "",
   });
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // ── HANDLE TYPING ─────────────────────────────────────────
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  // ── ADD A SKILL TAG ───────────────────────────────────────
   function handleSkillKeyDown(e) {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
       const val = skillInput.trim().replace(",", "");
-      // 🍰 EXAMPLE: trim() removes spaces, replace(',','') removes
-      // any comma the user typed — we accept both Enter and comma
-      // as "add this skill" triggers
       if (val && !skills.includes(val)) {
         setSkills([...skills, val]);
-        // 🍰 EXAMPLE: [...skills, val] creates a NEW array with
-        // all existing skills PLUS the new one. We never modify
-        // the existing array directly — React needs a new array
-        // to know something changed and re-render.
       }
       setSkillInput("");
     }
   }
 
-  // ── REMOVE A SKILL TAG ────────────────────────────────────
   function removeSkill(skillToRemove) {
     setSkills(skills.filter((s) => s !== skillToRemove));
-    // 🍰 EXAMPLE: filter() returns a new array containing ONLY
-    // items where the condition is true. Here: keep all skills
-    // that are NOT the one we're removing. One line, no loops.
   }
 
-  // ── SUBMIT FORM ───────────────────────────────────────────
   async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setLoading(true);
 
     // .ac.uk validation for supervisors
-    if (role === "supervisor" && !formData.email.endsWith(".ac.uk")) {
+    if (mode === "signup" && role === "supervisor" && !formData.email.endsWith(".ac.uk")) {
       setError("Supervisors must use an institutional .ac.uk email address");
       setLoading(false);
       return;
-      // 🍰 EXAMPLE: .endsWith() checks if a string ends with
-      // specific characters — like checking if a word ends with
-      // "ing". If not .ac.uk, we stop here with an error message
-      // before even touching the backend.
     }
 
     try {
@@ -142,19 +107,18 @@ function AuthPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Something went wrong");
+        setError(data.message || "Something went wrong");
+        return;
       }
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      // 🍰 EXAMPLE: we also save the user object so any page
-      // can read the user's name, role, and id without asking
-      // the backend again. JSON.stringify converts the object
-      // to text so localStorage can store it (it only stores text)
+      // Save token and user to AuthContext + localStorage
+      login(data.token, data.user);
 
+      // Redirect to home feed
       navigate("/home");
+
     } catch (err) {
-      setError(err.message);
+      setError("Cannot connect to server. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -250,9 +214,7 @@ function AuthPage() {
                   >
                     <div className="ap-role-icon">🎓</div>
                     <div className="ap-role-label">Student</div>
-                    <div className="ap-role-desc">
-                      Looking for opportunities
-                    </div>
+                    <div className="ap-role-desc">Looking for opportunities</div>
                   </div>
                   <div
                     className={`ap-role-btn ${role === "supervisor" ? "selected" : ""}`}
