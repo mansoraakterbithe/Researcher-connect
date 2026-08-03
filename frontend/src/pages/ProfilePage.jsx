@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import CreatePostModal from "../components/CreatePostModal";
 import { useAuth } from '../context/AuthContext';
 
+
 function Logo() {
   return (
     <svg viewBox="0 0 48 48" width="32" height="32">
@@ -334,7 +335,7 @@ function ProfilePage() {
                     🎓 Apply to Work With
                   </button>
                 )}
-                <button className="pp-btn-secondary">💬 Message</button>
+                <button className="pp-btn-secondary" onClick={() => navigate("/messages")}>💬 Message</button>
                 <button className="pp-btn-secondary" onClick={() => navigate('/profile/edit')}>
                   ✏️ Edit Profile
                 </button>

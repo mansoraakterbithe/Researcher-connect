@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/HomePage.css';
 import Footer from '../components/Footer';
 import CreatePostModal from "../components/CreatePostModal";
 import { useAuth } from '../context/AuthContext';
+
 function Logo() {
   return (
     <svg viewBox="0 0 48 48" width="32" height="32">
@@ -25,73 +26,6 @@ function Logo() {
   );
 }
 
-const POSTS = [
-  {
-    id: 1, type: 'paper',
-    author: 'Mansora Akter Bithe', initials: 'M',
-    avatarBg: 'linear-gradient(135deg,#1B3A6B,#2C5AA0)',
-    uni: 'UWE Bristol', time: 'Jul 7, 2024', verified: true,
-    title: 'Deep learning for early-stage skin disease classification — IEEE ICCIT 2024',
-    excerpt: 'A comparative study of CNN architectures achieving 94.3% accuracy using transfer learning with EfficientNet-B4 on HAM10000 dataset...',
-    tags: [{ label: 'AI / ML', color: 'blue' }, { label: 'Published', color: 'gold' }],
-    match: 94,
-    popup: {
-      title: 'Deep learning for skin disease classification using dermoscopic images',
-      body: 'IEEE ICCIT 2024 — Comparative study of CNN architectures (VGG16, ResNet50, EfficientNet-B4). Transfer learning with ImageNet weights. Data augmentation with Albumentations. Tested on HAM10000 dataset with 7 disease classes.',
-      stats: [{ val: '94.3%', label: 'Accuracy' }, { val: '0.91', label: 'F1 Score' }, { val: '7', label: 'Classes' }],
-      hint: '🔬 Click to read full paper',
-    },
-  },
-  {
-    id: 2, type: 'opportunity',
-    author: 'Dr. Sarah Chen', initials: 'Dr',
-    avatarBg: 'linear-gradient(135deg,#2C5AA0,#1B7BC4)',
-    uni: 'UCL Medical AI Lab · London', time: 'Jun 30, 2026', verified: true,
-    title: 'Research Assistant Opportunity — Deep Learning for Medical Imaging',
-    excerpt: 'Looking for a motivated student with Python and ML experience to join our team working on transformer-based architectures for radiology...',
-    tags: [{ label: 'Opportunity', color: 'green' }, { label: 'Medicine', color: 'blue' }, { label: 'AI / ML', color: 'purple' }],
-    match: 87,
-    popup: {
-      title: 'Research Assistant — Transformer Models for Radiology AI',
-      body: '12-month funded position at UCL. Working on Vision Transformers (ViT) for zero-shot radiology analysis. Requirements: Python, PyTorch, basic ML. UK students preferred. Start: September 2026.',
-      stats: [{ val: '12mo', label: 'Duration' }, { val: 'Funded', label: 'Stipend' }, { val: 'London', label: 'Location' }],
-      hint: '📋 Click to apply — deadline July 15',
-    },
-  },
-  {
-    id: 3, type: 'question',
-    author: 'James Kumar', initials: 'JK',
-    avatarBg: 'linear-gradient(135deg,#4A2C6B,#7B3FA0)',
-    uni: 'University of Edinburgh', time: 'Jun 30, 2026', verified: false,
-    title: 'Question: Best approach for handling class imbalance in medical imaging datasets?',
-    excerpt: 'Working on skin lesion classification with severe class imbalance (95% benign, 5% malignant). SMOTE vs focal loss vs weighted sampling?',
-    tags: [{ label: 'Question', color: 'purple' }, { label: 'AI / ML', color: 'blue' }],
-    match: null,
-    popup: {
-      title: 'Class Imbalance in Medical Imaging — Community Discussion',
-      body: 'Dataset: ISIC 2018, 10,015 images, 7 classes. Benign nevi dominant (6,705 samples). Malignant melanoma only 1,113. Getting 78% accuracy but very poor recall on minority class (0.31).',
-      stats: [{ val: '4', label: 'Answers' }, { val: '23', label: 'Views' }, { val: '2h', label: 'Ago' }],
-      hint: '💬 3 experts are answering this',
-    },
-  },
-  {
-    id: 4, type: 'paper',
-    author: 'Prof. Ahmed Hassan', initials: 'AH',
-    avatarBg: 'linear-gradient(135deg,#1B6B3A,#2CA05A)',
-    uni: 'University of Manchester', time: 'Jun 29, 2026', verified: true,
-    title: 'New paper: Explainable AI for clinical decision support — MICCAI 2026 accepted',
-    excerpt: 'SHAP-based explanations for deep learning models in clinical settings. Code and dataset available on GitHub for open research...',
-    tags: [{ label: 'Paper', color: 'gold' }, { label: 'AI / ML', color: 'blue' }, { label: 'Open Source', color: 'green' }],
-    match: null,
-    popup: {
-      title: 'Explainable AI for Clinical Decision Support Systems',
-      body: 'MICCAI 2026 accepted. Novel SHAP integration with attention mechanisms in ResNet-50 for chest X-ray analysis. Produces clinician-readable heatmaps. Dataset: ChestX-ray14 (112,120 images).',
-      stats: [{ val: 'MICCAI', label: 'Venue' }, { val: '92.1%', label: 'AUC' }, { val: 'Open', label: 'Source' }],
-      hint: '📄 Click to read full paper',
-    },
-  },
-];
-
 const CATEGORIES = ['All', 'AI / ML', 'Biology', 'Medicine', 'Physics', 'Data Science', 'Chemistry'];
 
 const TRENDING = [
@@ -101,18 +35,72 @@ const TRENDING = [
   { label: 'Trad. Statistics', color: '#f87171', pct: '↓ 12%', up: false },
 ];
 
-const SUGGESTED = [
-  { initials: 'SC', name: 'Dr. Sarah Chen', role: 'UCL · AI Research' },
-  { initials: 'AH', name: 'Prof. Ahmed Hassan', role: 'Manchester · XAI' },
-  { initials: 'JK', name: 'James Kumar', role: 'Edinburgh · ML' },
-];
-
 function HomePage() {
   const navigate = useNavigate();
+  const { logout, user, authFetch } = useAuth();
   const [activeCategory, setActiveCategory] = useState('All');
   const [showPostModal, setShowPostModal] = useState(false);
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
-  const { logout } = useAuth();
+  const [posts, setPosts] = useState([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [suggested, setSuggested] = useState([]);
+
+  const initial = user?.username?.charAt(0).toUpperCase() || 'M';
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await authFetch('/posts');
+        const data = await res.json();
+        const mapped = (data.posts || []).map(p => ({
+          id: p._id,
+          author: p.author?.username || 'Unknown',
+          initials: p.author?.username?.charAt(0).toUpperCase() || 'R',
+          avatarBg: 'linear-gradient(135deg,#1B3A6B,#2C5AA0)',
+          uni: p.author?.university || 'ResearchConnect',
+          verified: p.author?.isVerified || false,
+          time: new Date(p.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+          type: p.type,
+          title: p.title,
+          excerpt: p.content || p.abstract || '',
+          tags: (p.tags || []).slice(0, 3).map(tag => ({ label: tag, color: 'blue' })),
+          match: null,
+          popup: {
+            title: p.title,
+            body: p.content || p.abstract || 'No description provided.',
+            stats: [
+              { val: p.type, label: 'Type' },
+              { val: (p.likes?.length || 0).toString(), label: 'Likes' },
+              { val: (p.comments?.length || 0).toString(), label: 'Comments' },
+            ],
+            hint: '🔍 Click to read more'
+          }
+        }));
+        setPosts(mapped);
+      } catch (err) {
+        console.error('Feed fetch error:', err);
+      } finally {
+        setLoadingPosts(false);
+      }
+    };
+
+    const fetchSuggested = async () => {
+      try {
+        const res = await authFetch('/connections/suggestions');
+        const data = await res.json();
+        setSuggested((data.suggestions || []).slice(0, 3).map(s => ({
+          initials: s.username?.charAt(0).toUpperCase() || 'R',
+          name: s.username,
+          role: `${s.university || 'ResearchConnect'} · ${s.role}`
+        })));
+      } catch (err) {
+        console.error('Suggestions fetch error:', err);
+      }
+    };
+
+    fetchPosts();
+    fetchSuggested();
+  }, []);
 
   return (
     <div className="hf">
@@ -145,7 +133,18 @@ function HomePage() {
             </svg>
             New Post
           </button>
-          <div className="hf-avatar-wrap"><div className="hf-avatar" onClick={() => setShowAvatarMenu(!showAvatarMenu)}>M</div>{showAvatarMenu && (<div className="hf-avatar-menu"><div className="hf-avatar-menu-item" onClick={() => { navigate("/profile"); setShowAvatarMenu(false); }}>👤 View Profile</div><div className="hf-avatar-menu-item" onClick={() => { navigate("/profile/edit"); setShowAvatarMenu(false); }}>✏️ Edit Profile</div><div className="hf-avatar-menu-item" onClick={() => { navigate("/settings"); setShowAvatarMenu(false); }}>⚙️ Settings</div><div className="hf-avatar-menu-divider"/><div className="hf-avatar-menu-item logout" onClick={() => { logout(); navigate("/auth"); setShowAvatarMenu(false); }}>🚪 Logout</div></div>)}</div>
+          <div className="hf-avatar-wrap">
+            <div className="hf-avatar" onClick={() => setShowAvatarMenu(!showAvatarMenu)}>{initial}</div>
+            {showAvatarMenu && (
+              <div className="hf-avatar-menu">
+                <div className="hf-avatar-menu-item" onClick={() => { navigate('/profile'); setShowAvatarMenu(false); }}>👤 View Profile</div>
+                <div className="hf-avatar-menu-item" onClick={() => { navigate('/profile/edit'); setShowAvatarMenu(false); }}>✏️ Edit Profile</div>
+                <div className="hf-avatar-menu-item" onClick={() => { navigate('/settings'); setShowAvatarMenu(false); }}>⚙️ Settings</div>
+                <div className="hf-avatar-menu-divider"/>
+                <div className="hf-avatar-menu-item logout" onClick={() => { logout(); navigate('/auth'); setShowAvatarMenu(false); }}>🚪 Logout</div>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -175,7 +174,7 @@ function HomePage() {
             { icon: 'M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4M12 16h.01', label: 'Need Help' },
             { icon: 'M2 3h20v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V3zM8 21h8M12 17v4', label: 'Opportunity' },
           ].map(item => (
-            <div key={item.label} className="hf-side-item" onClick={() => item.path && navigate(item.path)}>
+            <div key={item.label} className="hf-side-item" onClick={() => setShowPostModal(true)}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d={item.icon}/>
               </svg>
@@ -222,7 +221,15 @@ function HomePage() {
             <div className="hf-sec-title">Latest Posts</div>
           </div>
 
-          {POSTS.map((post, i) => (
+          {loadingPosts ? (
+            <div style={{ color: 'rgba(255,255,255,0.4)', padding: '40px', textAlign: 'center', fontFamily: 'Inter, sans-serif' }}>
+              Loading posts...
+            </div>
+          ) : posts.length === 0 ? (
+            <div style={{ color: 'rgba(255,255,255,0.4)', padding: '40px', textAlign: 'center', fontFamily: 'Inter, sans-serif' }}>
+              No posts yet. Be the first to post!
+            </div>
+          ) : posts.map((post, i) => (
             <div className="hf-post-wrap" key={post.id}>
               <div className="hf-post" style={{ animationDelay: `${0.3 + i * 0.12}s` }}>
                 <div className="hf-post-header">
@@ -303,14 +310,14 @@ function HomePage() {
           <div className="hf-widget">
             <div className="hf-widget-title">Your Profile</div>
             <div className="hf-profile-mini">
-              <div className="hf-profile-avatar">M</div>
-              <div className="hf-profile-name">Mansora Akter Bithe</div>
-              <div className="hf-profile-role">Data Scientist · UWE Bristol</div>
+              <div className="hf-profile-avatar">{initial}</div>
+              <div className="hf-profile-name">{user?.username || 'Researcher'}</div>
+              <div className="hf-profile-role">{user?.role || 'Student'} · ResearchConnect</div>
             </div>
             <div className="hf-stats-row">
-              <div className="hf-stat"><strong>10</strong><span>Followers</span></div>
-              <div className="hf-stat"><strong>2</strong><span>Following</span></div>
-              <div className="hf-stat"><strong>94%</strong><span>Match</span></div>
+              <div className="hf-stat"><strong>0</strong><span>Followers</span></div>
+              <div className="hf-stat"><strong>0</strong><span>Following</span></div>
+              <div className="hf-stat"><strong>—</strong><span>Match</span></div>
             </div>
           </div>
 
@@ -327,33 +334,36 @@ function HomePage() {
             ))}
           </div>
 
-          <div className="hf-widget">
-            <div className="hf-widget-title">Suggested Connections</div>
-            {SUGGESTED.map(s => (
-              <div className="hf-suggested" key={s.name}>
-                <div className="hf-sug-left">
-                  <div className="hf-sug-avatar">{s.initials}</div>
-                  <div>
-                    <div className="hf-sug-name">{s.name}</div>
-                    <div className="hf-sug-role">{s.role}</div>
+          {suggested.length > 0 && (
+            <div className="hf-widget">
+              <div className="hf-widget-title">Suggested Connections</div>
+              {suggested.map(s => (
+                <div className="hf-suggested" key={s.name}>
+                  <div className="hf-sug-left">
+                    <div className="hf-sug-avatar">{s.initials}</div>
+                    <div>
+                      <div className="hf-sug-name">{s.name}</div>
+                      <div className="hf-sug-role">{s.role}</div>
+                    </div>
                   </div>
+                  <button className="hf-follow-btn">Follow</button>
                 </div>
-                <button className="hf-follow-btn">Follow</button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </aside>
       </div>
 
-      {/* CHATBOT */}
       <div className="hf-chatbot">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0d1b2e" strokeWidth="2.5">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
       </div>
-      {showPostModal && <CreatePostModal onClose={() => setShowPostModal(false)} userRole="student" />}
+
+      {showPostModal && <CreatePostModal onClose={() => setShowPostModal(false)} userRole={user?.role || 'student'} />}
       <Footer />
     </div>
   );
 }
+
 export default HomePage;

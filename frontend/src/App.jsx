@@ -7,6 +7,7 @@ import ProfilePage from './pages/ProfilePage';
 import EditProfilePage from './pages/EditProfilePage';
 import NotificationsPage from './pages/NotificationsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import MessagesPage from './pages/MessagesPage';
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -39,7 +40,12 @@ function App() {
         <Route path="/notifications" element={
           <ProtectedRoute><NotificationsPage /></ProtectedRoute>
         } />
-
+        <Route path="/messages" element={
+        <ProtectedRoute><MessagesPage /></ProtectedRoute>
+        } />
+        <Route path="/messages/:userId" element={
+        <ProtectedRoute><MessagesPage /></ProtectedRoute>
+        } />
         {/* Catch all — redirect to landing */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

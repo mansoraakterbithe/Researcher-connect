@@ -1,12 +1,11 @@
 // ============================================================
 // FILE: src/components/CreatePostModal.jsx
-// Shared component — used on every page that has a navbar
 // ============================================================
 
 import { useState } from 'react';
 import './CreatePostModal.css';
+import { useAuth } from '../context/AuthContext';
 
-// ── POST TYPES ───────────────────────────────────────────────
 const POST_TYPES = [
   { id: 'post', icon: '📄', label: 'Post', supervisorOnly: false },
   { id: 'paper', icon: '🔬', label: 'Paper', supervisorOnly: false },
@@ -15,11 +14,6 @@ const POST_TYPES = [
   { id: 'opportunity', icon: '💼', label: 'Opportunity', supervisorOnly: true },
 ];
 
-// ── AI SIMULATED RESPONSES ───────────────────────────────────
-// 🍰 EXAMPLE: these are fake AI responses that look real.
-// When we connect to Claude API later, we replace the
-// simulateAI function body with a real fetch() call.
-// Everything else stays exactly the same.
 const AI_TAG_SUGGESTIONS = {
   post: ['Machine Learning', 'Medical Imaging', 'Deep Learning', 'Python', 'Research'],
   paper: ['CNN', 'Transfer Learning', 'Computer Vision', 'Healthcare AI', 'PyTorch'],
@@ -40,8 +34,8 @@ const AI_REVIEW_FEEDBACK = {
 
 function CreatePostModal({ onClose, userRole = 'student' }) {
   const isSupervisor = userRole === 'supervisor';
+  const { authFetch } = useAuth();
 
-  // ── STATE ──────────────────────────────────────────────────
   const [activeType, setActiveType] = useState('post');
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
@@ -50,8 +44,9 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
   const [aiDescription, setAiDescription] = useState('');
   const [aiReview, setAiReview] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [posting, setPosting] = useState(false);
+  const [postError, setPostError] = useState('');
 
-  // Form fields
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -75,11 +70,9 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
 
   function handleChange(field, value) {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear AI review when user edits
     if (aiReview) setAiReview('');
   }
 
-  // ── TAG MANAGEMENT ─────────────────────────────────────────
   function handleTagKeyDown(e) {
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
@@ -103,30 +96,15 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
     setAiSuggestedTags(prev => prev.filter(t => t !== tag));
   }
 
-  // ── AI FEATURES ────────────────────────────────────────────
-  // 🍰 EXAMPLE: simulateAI is like a fake phone call.
-  // It rings (loading state), waits 1.5 seconds, then
-  // "answers" with a pre-written response.
-  // Later: replace the setTimeout with a real fetch() to
-  // your backend which calls Claude API.
   async function simulateAI(feature) {
     setAiLoading(feature);
-    // Simulated delay — replace with real API call later:
-    // const res = await fetch('/api/ai/suggest-tags', { body: JSON.stringify({ content }) })
-    // const data = await res.json()
     await new Promise(resolve => setTimeout(resolve, 1500));
-
-    if (feature === 'tags') {
-      setAiSuggestedTags(AI_TAG_SUGGESTIONS[activeType] || []);
-    }
-    if (feature === 'description') {
-      setAiDescription(AI_DESCRIPTIONS[activeType] || AI_DESCRIPTIONS.paper);
-    }
+    if (feature === 'tags') setAiSuggestedTags(AI_TAG_SUGGESTIONS[activeType] || []);
+    if (feature === 'description') setAiDescription(AI_DESCRIPTIONS[activeType] || AI_DESCRIPTIONS.paper);
     if (feature === 'review') {
       const hasContent = formData.title || formData.content || formData.question;
       setAiReview(hasContent ? AI_REVIEW_FEEDBACK.good : AI_REVIEW_FEEDBACK.improve);
     }
-
     setAiLoading('');
   }
 
@@ -136,15 +114,65 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
     setAiDescription('');
   }
 
-  // ── SUBMIT ─────────────────────────────────────────────────
-  function handleSubmit(e) {
+  // ── SUBMIT — sends to real backend ────────────────────────
+  async function handleSubmit(e) {
     e.preventDefault();
-    // Later: send formData + tags to your backend API
-    // await fetch('/api/posts', { method: 'POST', body: JSON.stringify({ ...formData, tags, type: activeType }) })
-    setSubmitted(true);
+    setPosting(true);
+    setPostError('');
+
+    try {
+      // Build the title from whichever field is active
+      const title =
+        activeType === 'question' ? formData.question :
+        activeType === 'need' ? formData.needTitle :
+        activeType === 'opportunity' ? formData.oppTitle :
+        formData.title;
+
+      // Build the content from whichever field is active
+      const content =
+        activeType === 'question' ? formData.context :
+        activeType === 'need' ? formData.needDetails :
+        activeType === 'opportunity' ? formData.oppDescription :
+        formData.content;
+
+      const body = {
+        type: activeType,
+        title,
+        content,
+        tags,
+        abstract: formData.abstract || '',
+        venue: formData.venue || '',
+        year: formData.year ? parseInt(formData.year) : null,
+        link: formData.link || '',
+        urgency: formData.urgency || '',
+        deadline: formData.oppDeadline || null,
+        funding: formData.oppFunding || '',
+        requirements: formData.oppRequirements || '',
+        duration: formData.oppDuration || '',
+        location: formData.oppLocation || '',
+      };
+
+      const res = await authFetch('/posts', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setPostError(data.message || 'Failed to create post');
+        return;
+      }
+
+      setSubmitted(true);
+
+    } catch (err) {
+      setPostError('Cannot connect to server. Please try again.');
+    } finally {
+      setPosting(false);
+    }
   }
 
-  // ── CLOSE ON OVERLAY CLICK ─────────────────────────────────
   function handleOverlayClick(e) {
     if (e.target === e.currentTarget) onClose();
   }
@@ -171,13 +199,11 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
     <div className="cpm-overlay" onClick={handleOverlayClick}>
       <div className="cpm-modal" onClick={e => e.stopPropagation()}>
 
-        {/* ── HEADER ──────────────────────────────────────── */}
         <div className="cpm-head">
           <div className="cpm-title">Create Post</div>
           <button className="cpm-x" onClick={onClose}>✕</button>
         </div>
 
-        {/* ── POST TYPE SELECTOR ───────────────────────────── */}
         <div className="cpm-types">
           {POST_TYPES.map(type => (
             <div
@@ -203,10 +229,9 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
 
         <div className="cpm-divider"/>
 
-        {/* ── FORM ────────────────────────────────────────── */}
         <form className="cpm-form" onSubmit={handleSubmit}>
 
-          {/* ── POST FORM ───────────────────────────────── */}
+          {/* POST FORM */}
           {activeType === 'post' && (
             <>
               <div className="cpm-field">
@@ -234,7 +259,7 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
             </>
           )}
 
-          {/* ── PAPER FORM ──────────────────────────────── */}
+          {/* PAPER FORM */}
           {activeType === 'paper' && (
             <>
               <div className="cpm-field">
@@ -245,7 +270,6 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
                   onChange={e => handleChange('title', e.target.value)}
                   required/>
               </div>
-
               <div className="cpm-field">
                 <label className="cpm-label">
                   Abstract
@@ -269,12 +293,10 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
                   value={formData.abstract}
                   onChange={e => handleChange('abstract', e.target.value)}/>
               </div>
-
               <div className="cpm-row">
                 <div className="cpm-field">
                   <label className="cpm-label">Journal / Conference</label>
-                  <input className="cpm-input"
-                    placeholder="e.g. IEEE ICCIT 2024"
+                  <input className="cpm-input" placeholder="e.g. IEEE ICCIT 2024"
                     value={formData.venue}
                     onChange={e => handleChange('venue', e.target.value)}/>
                 </div>
@@ -285,18 +307,16 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
                     onChange={e => handleChange('year', e.target.value)}/>
                 </div>
               </div>
-
               <div className="cpm-field">
                 <label className="cpm-label">Paper Link (DOI or URL)</label>
-                <input className="cpm-input"
-                  placeholder="https://doi.org/..."
+                <input className="cpm-input" placeholder="https://doi.org/..."
                   value={formData.link}
                   onChange={e => handleChange('link', e.target.value)}/>
               </div>
             </>
           )}
 
-          {/* ── QUESTION FORM ───────────────────────────── */}
+          {/* QUESTION FORM */}
           {activeType === 'question' && (
             <>
               <div className="cpm-field">
@@ -317,7 +337,7 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
             </>
           )}
 
-          {/* ── NEED HELP FORM ──────────────────────────── */}
+          {/* NEED HELP FORM */}
           {activeType === 'need' && (
             <>
               <div className="cpm-field">
@@ -350,12 +370,12 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
             </>
           )}
 
-          {/* ── OPPORTUNITY FORM ────────────────────────── */}
+          {/* OPPORTUNITY FORM */}
           {activeType === 'opportunity' && !isSupervisor && (
             <div className="cpm-lock-state">
               <div className="cpm-lock-icon">🔒</div>
               <div className="cpm-lock-title">Supervisor Only Feature</div>
-              <div className="cpm-lock-sub">Only verified supervisors with an institutional .ac.uk email address can post research opportunities. This protects students from fake listings.</div>
+              <div className="cpm-lock-sub">Only verified supervisors with an institutional .ac.uk email address can post research opportunities.</div>
               <div className="cpm-lock-badge">Get verified → update your email to your .ac.uk address in Settings</div>
             </div>
           )}
@@ -370,7 +390,6 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
                   onChange={e => handleChange('oppTitle', e.target.value)}
                   required/>
               </div>
-
               <div className="cpm-field">
                 <label className="cpm-label">
                   Description
@@ -390,11 +409,10 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
                   </div>
                 )}
                 <textarea className="cpm-input cpm-ta" rows={4}
-                  placeholder="Describe the research opportunity, project, and what the student will do..."
+                  placeholder="Describe the research opportunity..."
                   value={formData.oppDescription}
                   onChange={e => handleChange('oppDescription', e.target.value)}/>
               </div>
-
               <div className="cpm-field">
                 <label className="cpm-label">Requirements</label>
                 <textarea className="cpm-input cpm-ta" rows={3}
@@ -402,7 +420,6 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
                   value={formData.oppRequirements}
                   onChange={e => handleChange('oppRequirements', e.target.value)}/>
               </div>
-
               <div className="cpm-row">
                 <div className="cpm-field">
                   <label className="cpm-label">Duration</label>
@@ -417,7 +434,6 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
                     onChange={e => handleChange('oppLocation', e.target.value)}/>
                 </div>
               </div>
-
               <div className="cpm-row">
                 <div className="cpm-field">
                   <label className="cpm-label">Application Deadline</label>
@@ -441,47 +457,37 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
             </>
           )}
 
-          {/* ── SHARED: TAGS + AI FEATURES ──────────────── */}
+          {/* SHARED: TAGS + AI */}
           {activeType !== 'opportunity' && (
             <>
-              {/* AI TAG SUGGESTIONS */}
               <div className="cpm-ai-row">
                 <button type="button" className="cpm-ai-btn"
                   onClick={() => simulateAI('tags')}
                   disabled={aiLoading === 'tags'}>
-                  {aiLoading === 'tags'
-                    ? <><span className="cpm-ai-spin">⏳</span> AI thinking...</>
-                    : <><span>✨</span> AI: Suggest Tags</>}
+                  {aiLoading === 'tags' ? <><span className="cpm-ai-spin">⏳</span> AI thinking...</> : <><span>✨</span> AI: Suggest Tags</>}
                 </button>
                 <button type="button" className="cpm-ai-btn"
                   onClick={() => simulateAI('review')}
                   disabled={aiLoading === 'review'}>
-                  {aiLoading === 'review'
-                    ? <><span className="cpm-ai-spin">⏳</span> Reviewing...</>
-                    : <><span>🔍</span> AI: Review Before Posting</>}
+                  {aiLoading === 'review' ? <><span className="cpm-ai-spin">⏳</span> Reviewing...</> : <><span>🔍</span> AI: Review Before Posting</>}
                 </button>
               </div>
 
-              {/* AI SUGGESTED TAGS */}
               {aiSuggestedTags.length > 0 && (
                 <div className="cpm-ai-tags">
                   <span className="cpm-ai-tags-label">✨ AI suggested — click to add:</span>
                   {aiSuggestedTags.map(tag => (
-                    <span key={tag} className="cpm-suggested-tag" onClick={() => addSuggestedTag(tag)}>
-                      + {tag}
-                    </span>
+                    <span key={tag} className="cpm-suggested-tag" onClick={() => addSuggestedTag(tag)}>+ {tag}</span>
                   ))}
                 </div>
               )}
 
-              {/* AI REVIEW RESULT */}
               {aiReview && (
                 <div className={`cpm-review-box ${aiReview.startsWith('✅') ? 'good' : 'warn'}`}>
                   {aiReview}
                 </div>
               )}
 
-              {/* TAGS INPUT */}
               <div className="cpm-field">
                 <label className="cpm-label">Tags</label>
                 <div className="cpm-tags-wrap">
@@ -504,7 +510,7 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
             </>
           )}
 
-          {/* ── FOOTER ──────────────────────────────────── */}
+          {/* FOOTER */}
           <div className="cpm-footer">
             <div className="cpm-footer-left">
               <div className="cpm-icon-btn" title="Add Image">🖼️</div>
@@ -512,9 +518,14 @@ function CreatePostModal({ onClose, userRole = 'student' }) {
               <div className="cpm-icon-btn" title="Attach File">📎</div>
             </div>
             <div className="cpm-footer-right">
+              {postError && (
+                <div style={{ color: '#f87171', fontSize: '13px', marginRight: '12px' }}>
+                  {postError}
+                </div>
+              )}
               <button type="button" className="cpm-draft-btn">Save Draft</button>
-              <button type="submit" className="cpm-post-btn">
-                {activeType === 'opportunity' && !isSupervisor ? '🔒 Locked' : 'Post →'}
+              <button type="submit" className="cpm-post-btn" disabled={posting}>
+                {posting ? 'Posting...' : activeType === 'opportunity' && !isSupervisor ? '🔒 Locked' : 'Post →'}
               </button>
             </div>
           </div>
