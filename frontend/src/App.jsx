@@ -8,6 +8,7 @@ import EditProfilePage from './pages/EditProfilePage';
 import NotificationsPage from './pages/NotificationsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import MessagesPage from './pages/MessagesPage';
+import ConnectionsPage from './pages/ConnectionsPage';
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -45,6 +46,9 @@ function App() {
         } />
         <Route path="/messages/:userId" element={
         <ProtectedRoute><MessagesPage /></ProtectedRoute>
+        } />
+        <Route path="/connections" element={
+        <ProtectedRoute><ConnectionsPage /></ProtectedRoute>
         } />
         {/* Catch all — redirect to landing */}
         <Route path="*" element={<Navigate to="/" replace />} />

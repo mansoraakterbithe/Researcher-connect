@@ -123,7 +123,7 @@ function HomePage() {
         <div className="hf-nav-right">
           <div className="hf-nav-link active">Home</div>
           <div className="hf-nav-link">Opportunities</div>
-          <div className="hf-nav-link">Connections</div>
+          <div className="hf-nav-link" onClick={() => navigate("/connections")}>Connections</div>
           <div className="hf-nav-link" onClick={() => navigate('/notifications')}>🔔 Notifications</div>
           <div className="hf-nav-link">Events</div>
           <button className="hf-new-btn" onClick={() => setShowPostModal(true)}>
@@ -156,10 +156,10 @@ function HomePage() {
           {[
             { icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z', label: 'Home Feed', active: true },
             { icon: 'M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z', label: 'Discover' },
-            { icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', label: 'Connections' },
-            { icon: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.94-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z', label: 'Messages' },
+            { icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', label: 'Connections', path: '/connections' },
+            { icon: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.94-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z', label: 'Messages', path: '/messages' },
           ].map(item => (
-            <div key={item.label} className={`hf-side-item ${item.active ? 'active' : ''}`}>
+            <div key={item.label} className={`hf-side-item ${item.active ? 'active' : ''}`} onClick={() => item.path && navigate(item.path)}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d={item.icon}/>
               </svg>
