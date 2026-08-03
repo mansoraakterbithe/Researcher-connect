@@ -9,6 +9,8 @@ import NotificationsPage from './pages/NotificationsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import MessagesPage from './pages/MessagesPage';
 import ConnectionsPage from './pages/ConnectionsPage';
+import ApplicationsPage from './pages/ApplicationsPage';
+import SearchPage from './pages/SearchPage';
 
 function App() {
   const { isLoggedIn } = useAuth();
@@ -49,6 +51,12 @@ function App() {
         } />
         <Route path="/connections" element={
         <ProtectedRoute><ConnectionsPage /></ProtectedRoute>
+        } />
+        <Route path="/applications" element={
+        <ProtectedRoute><ApplicationsPage /></ProtectedRoute>
+        } />
+        <Route path="/search" element={
+        <ProtectedRoute><SearchPage /></ProtectedRoute>
         } />
         {/* Catch all — redirect to landing */}
         <Route path="*" element={<Navigate to="/" replace />} />
